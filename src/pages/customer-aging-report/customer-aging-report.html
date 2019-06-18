@@ -1,0 +1,218 @@
+<!--
+  Generated template for the CustomerAgingReportPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="navbar" text-center>
+
+    <ion-title>
+      Customer Aging Report
+    </ion-title>
+
+    <ion-buttons end>
+
+      <!-- <button (click)="downloadAgingReport()" ion-button item-end style="background-color: #1c2431; font-size: 20px;">
+          <ion-icon name="ios-cloud-download-outline" color="primary"></ion-icon>
+        </button> -->
+
+      <button ion-button item-end (click)="presentPopover($event)" style="background-color: #1c2431; font-size: 20px;">
+        <ion-icon name="md-more"></ion-icon>
+      </button>
+
+    </ion-buttons>
+
+
+  </ion-navbar>
+</ion-header>
+
+<ion-content no-padding>
+
+  <ion-row padding>
+    <ion-col col-12 text-center>
+      <strong>{{customer.customerDetails.cardCode}} - {{customer.customerDetails.cardName}}</strong>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-4></ion-col>
+    <ion-col style="font-size:1.3em" col-2 (click)="callCust()" *ngIf="customer.customerDetails.cellular != null && customer.customerDetails.cellular != ''">
+      <ion-icon name="md-call"></ion-icon>
+    </ion-col>
+    <ion-col style="font-size:1.3em" col-2 (click)="viewCustInfo()">
+      <ion-icon name="ios-information-circle-outline"></ion-icon>
+    </ion-col>
+    <ion-col col-4></ion-col>
+  </ion-row>
+
+  <ion-row padding>
+    <ion-col col-12 text-center>
+      <span style="font-size:4rem;"><strong><i class="fa fa-rupee"></i> {{customer.customerDetails.balance}}</strong></span>
+      <p style="color:#AFAFAF;font-size:10px;">(Balance As Of {{fromDate | date : 'dd MMM yy'}})</p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-10 class="pj-full-width-border" no-margin>
+      <ion-label>0 - 30 Days</ion-label>
+    </ion-col>
+    <ion-col col-2 (click)="viewBills('-30')" class="pj-full-width-border" no-margin style="padding-top: 5%;">
+      <ion-icon color="primary" name="arrow-forward"></ion-icon>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-12>
+      <p text-center style="color: #fff;font-size: 4rem;"><i class="fa fa-rupee"></i> {{agingReportDetails.firstQ}}</p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-10 class="pj-full-width-border" no-margin>
+      <ion-label>31 - 60 Days</ion-label>
+    </ion-col>
+    <ion-col col-2 (click)="viewBills('-60')" class="pj-full-width-border" no-margin style="padding-top: 5%;">
+      <ion-icon color="primary" name="arrow-forward"></ion-icon>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-12>
+      <p text-center style="color: #fff;font-size: 4rem;"><i class="fa fa-rupee"></i> {{agingReportDetails.secondQ}}</p>
+    </ion-col>
+  </ion-row>
+
+
+  <ion-row>
+    <ion-col col-10 class="pj-full-width-border" no-margin>
+      <ion-label>61 - 90 Days</ion-label>
+    </ion-col>
+    <ion-col col-2 (click)="viewBills('-90')" class="pj-full-width-border" no-margin style="padding-top: 5%;">
+      <ion-icon color="primary" name="arrow-forward"></ion-icon>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-12>
+      <p text-center style="color: #fff;font-size: 4rem;"><i class="fa fa-rupee"></i> {{agingReportDetails.thirdQ}}</p>
+    </ion-col>
+  </ion-row>
+
+
+  <ion-row>
+    <ion-col col-10 class="pj-full-width-border" no-margin>
+      <ion-label>91 - 120 Days</ion-label>
+    </ion-col>
+    <ion-col col-2 (click)="viewBills('-120')" class="pj-full-width-border" no-margin style="padding-top: 5%;">
+      <ion-icon color="primary" name="arrow-forward"></ion-icon>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-12>
+      <p text-center style="color: #fff;font-size: 4rem;"><i class="fa fa-rupee"></i> {{agingReportDetails.fourthQ}}</p>
+    </ion-col>
+  </ion-row>
+
+
+  <ion-row>
+    <ion-col col-10 class="pj-full-width-border" no-margin>
+      <ion-label>121+ Days</ion-label>
+    </ion-col>
+    <ion-col col-2 (click)="viewBills('-365')" class="pj-full-width-border" no-margin style="padding-top: 5%;">
+      <ion-icon color="primary" name="arrow-forward"></ion-icon>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-12>
+      <p text-center style="color: #fff;font-size: 4rem;"><i class="fa fa-rupee"></i> {{agingReportDetails.otherQ}}</p>
+    </ion-col>
+  </ion-row>
+
+  <!-- <div class="scroll-table-div">
+    <table>
+      <tr>
+        <th class="headcol">Posting Date</th>
+        <td class="long bold-heading">Due Date</td>
+        <td class="long bold-heading">Blanket Agreement</td>
+        <td class="long bold-heading">Type</td>
+        <td class="long bold-heading">Doc. No.</td>
+        <td class="long bold-heading">Instal. No.</td>
+        <td class="long bold-heading">BP Ref. No.</td>
+        <td class="long bold-heading">Balance Due(INR)</td>
+        <td class="long bold-heading">Future Remit(INR)</td>
+        <td class="long bold-heading" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 30">0
+          - 30</td>
+        <td class="long bold-heading" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 60">30
+          - 60</td>
+        <td class="long bold-heading" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 30">60
+          - 90</td>
+        <td class="long bold-heading" *ngIf="agingReport == null || agingReport == undefined">0 - 30</td>
+        <td class="long bold-heading">Payment Method Code</td>
+      </tr>
+      <tr *ngFor="let agingReport of agingReportList">
+        <th class="headcol">{{agingReport.postingDate}}</th>
+        <td class="long">{{agingReport.dueDate}}</td>
+        <td class="long">{{agingReport.blanketAgreement}}</td>
+        <td class="long">{{agingReport.type}}</td>
+        <td class="long">{{agingReport.docNo}}</td>
+        <td class="long">{{agingReport.installationNo}}</td>
+        <td class="long">{{agingReport.bpRefNo}}</td>
+        <td class="long">Rs. {{agingReport.balanceDue}}</td>
+        <td class="long">Rs. {{agingReport.futureRemit}}</td>
+        <td class="long">{{agingReport.noOfDays}}</td>
+        <td class="long">{{agingReport.paymentMethodCode}}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="pdfDiv" style="display: none">
+    <h4>Report Date - {{currentDate}}</h4>
+    <h4>Customer Code - {{customer.customerDetails.cardCode}}</h4>
+    <h4>Customer Name - {{customer.customerDetails.cardName}}</h4>
+    <table style="width:100%;border-collapse: collapse; margin-top: 5%;">
+      <tr>
+        <td style="border: 1px solid black;border-collapse: collapse;">Posting Date</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">Due Date</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">Blanket Agreement</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">Type</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">Doc. No.</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">Instal. No.</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">BP Ref. No.</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">Balance Due(INR)</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">Future Remit(INR)</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">Payment Method Code</td>
+        <td style="border: 1px solid black;border-collapse: collapse;" *ngIf="agingReport == null || agingReport == undefined">0
+          - 30</td>
+        <td style="border: 1px solid black;border-collapse: collapse;" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 30">0
+          - 30</td>
+        <td style="border: 1px solid black;border-collapse: collapse;" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 60">30
+          - 60</td>
+        <td style="border: 1px solid black;border-collapse: collapse;" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 30">60
+          - 90</td>
+      </tr>
+      <tr *ngFor="let agingReport of agingReportList">
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.postingDate}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.dueDate}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.blanketAgreement}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.type}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.docNo}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.installationNo}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.bpRefNo}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.balanceDue}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.futureRemit}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;">{{agingReport.paymentMethodCode}}</td>
+        <td style="border: 1px solid black;border-collapse: collapse;" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 30">0
+          - 30</td>
+        <td style="border: 1px solid black;border-collapse: collapse;" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 60">30
+          - 60</td>
+        <td style="border: 1px solid black;border-collapse: collapse;" *ngIf="agingReport != null && agingReport != undefined && agingReport.noOfDays == 90">60
+          - 90</td>
+        <td style="border: 1px solid black;border-collapse: collapse;" *ngIf="agingReport == null || agingReport == undefined"></td>
+      </tr>
+    </table>
+  </div> -->
+
+</ion-content>

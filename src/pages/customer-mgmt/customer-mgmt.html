@@ -1,0 +1,158 @@
+<!--
+  Generated template for the CustomerMgmtPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="navbar" text-center>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-buttons end>
+      <button ion-button (click)="presentPopoverAging($event)" style="background-color: #1c2431; font-size: 20px; color:#E4EBED;">
+        <ion-icon name="ios-list"></ion-icon>
+      </button>
+      <button ion-button item-end (click)="presentPopoverDataSorting($event)" style="background-color: #1c2431; font-size: 20px; color:#E4EBED;">
+        <ion-icon name="md-more"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>
+      Customers
+    </ion-title>
+  </ion-navbar>
+  <ion-row style="background-color: #2F3C51 !important; color: #FFCB08 !important">
+    <ion-col col-10 text-center>
+      Last Synced: {{tillDate | date : 'dd MMM yy hh:mm a'}}
+    </ion-col>
+    <ion-col col-2 text-center>
+      <ion-icon ios="ios-refresh" (click)="syncCustomerData()" md="md-refresh" *ngIf="!isDataSynching"></ion-icon>
+      <ion-spinner name="crescent" *ngIf="isDataSynching" color="plain"></ion-spinner>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col col-12>
+      <ion-searchbar [(ngModel)]="myInput" (ionChange)="onInput()" placeholder="Search By Name, Phone No., Code">
+      </ion-searchbar>
+    </ion-col>
+    <!-- <ion-col col-2 (click)="searchCustomers()">
+      <ion-icon name="md-search" class="search-btn"></ion-icon>
+    </ion-col> -->
+  </ion-row>
+
+</ion-header>
+
+
+<ion-content>
+
+
+  <div *ngIf="customersList.length==0" class="pj-empty-page" style="margin-top: 40%;">
+    <ion-icon name="ios-contact-outline"></ion-icon>
+    <h4>No Customers To Show</h4>
+  </div>
+
+  <ion-card *ngIf="customersList.length>0 && (null == this.referrer 
+    || undefined == this.referrer || this.referrer == '')">
+
+    <!-- <ion-card-header>
+      <ion-row>
+        <ion-col col-12 text-center>
+          <strong>Outstanding Recievables</strong><br />
+        </ion-col>
+      </ion-row>
+    </ion-card-header> -->
+
+    <ion-card-content>
+
+      <ion-row>
+        <ion-col col-12 text-center>
+          <span style="font-size:3rem;">
+            <strong>
+              <i class="fa fa-rupee"></i> {{totalOutstanding}}
+            </strong>
+          </span>
+          <p style="color:#E4EBED;font-size:12px;">( Outstanding Recievables As Of {{tillDate | date : 'dd MMM yy'}} |
+            > {{displayCriteria}} )</p>
+        </ion-col>
+      </ion-row>
+
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngFor="let customer of customersList">
+
+    <ion-card-header (click)="viewCustomerDetails(customer)">
+      <!-- <ion-row>
+        <ion-col col-12>
+          <strong>{{customer.customerDetails.cardCode}}</strong>
+        </ion-col>
+      </ion-row> -->
+      <ion-row>
+        <ion-col col-9>
+          <p style="color: #FFCB08 !important"><strong>{{customer.customerDetails.cardName}}</strong></p>
+        </ion-col>
+        <ion-col col-3>
+          <strong><i *ngIf="customer.calculatedBal != null && customer.calculatedBal != ''" class="fa fa-rupee"></i>
+            {{customer.calculatedBal == null || customer.calculatedBal == '' ? 'NA' : customer.calculatedBal }}</strong>
+        </ion-col>
+      </ion-row>
+    </ion-card-header>
+
+    <ion-card-content>
+
+      <!-- <ion-row>
+        <ion-col col-5>
+          Balance
+        </ion-col>
+        <ion-col col-7>
+            <i class="fa fa-rupee"></i> {{customer.calculatedBal == null || customer.calculatedBal == '' ? 'Not Available' :
+          customer.calculatedBal }}
+        </ion-col>
+      </ion-row> -->
+
+      <!-- <ion-row>
+        <ion-col col-12>
+          Contact No.
+        </ion-col>
+      </ion-row> -->
+      <ion-row *ngIf="customer.customerDetails.cellular != null && customer.customerDetails.cellular != ''">
+        <ion-col col-11>
+          {{customer.customerDetails.cellular}}
+        </ion-col>
+        <ion-col col-1 color="primary" (click)="callCust(customer.customerDetails.cellular)">
+          <ion-icon name="md-call"></ion-icon>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="customer.customerDetails.phone1 != null && customer.customerDetails.phone1 != ''">
+        <ion-col col-11>
+          {{customer.customerDetails.phone1}}
+        </ion-col>
+        <ion-col col-1 color="primary" (click)="callCust(customer.customerDetails.phone1)">
+          <ion-icon name="md-call"></ion-icon>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="customer.customerDetails.phone2 != null && customer.customerDetails.phone2 != ''">
+        <ion-col col-11>
+          {{customer.customerDetails.phone2}}
+        </ion-col>
+        <ion-col col-1 color="primary" (click)="callCust(customer.customerDetails.phone2)">
+          <ion-icon name="md-call"></ion-icon>
+        </ion-col>
+      </ion-row>
+
+
+    </ion-card-content>
+
+
+  </ion-card>
+
+  <!-- Infinite Scroll Content -->
+  <!-- <ion-infinite-scroll (ionInfinite)="getRecordsPaginated($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading Customers...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll> -->
+
+</ion-content>
