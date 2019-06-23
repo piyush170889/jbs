@@ -52,9 +52,15 @@ import { SQLite } from '@ionic-native/sqlite';
 import { DatabaseProvider } from '../providers/database/database';
 import { LedgerListingDetailsPage } from '../pages/ledger-listing-details/ledger-listing-details';
 import { LedgerDateSelectionPage } from '../pages/ledger-date-selection/ledger-date-selection';
-
-// import ‘intl’;
-// import ‘intl/locale-data/jsonp/en’;
+import { VisitHistoryPage } from '../pages/visit-history/visit-history';
+import { VisitAddSitePage } from '../pages/visit-add-site/visit-add-site';
+import { PunchEntryPage } from '../pages/punch-entry/punch-entry';
+import { PunchExitPage } from '../pages/punch-exit/punch-exit';
+import { PlaceaddressPage } from '../pages/placeaddress/placeaddress';
+import { TestPage } from '../pages/test/test';
+import { LocationsPage } from '../pages/locations/locations';
+import { SignaturePadModule } from 'angular2-signaturepad';
+// import { Storage } from '@ionic/storage';
 
 
 @NgModule({
@@ -88,11 +94,19 @@ import { LedgerDateSelectionPage } from '../pages/ledger-date-selection/ledger-d
     PopoverSortFiltersPage,
     ModalLedgerOptionsPage,
     LedgerListingDetailsPage,
-    LedgerDateSelectionPage
+    LedgerDateSelectionPage,
+    VisitHistoryPage,
+    VisitAddSitePage,
+    PunchEntryPage,
+    PunchExitPage,
+    PlaceaddressPage,
+    TestPage,
+    LocationsPage
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    SignaturePadModule,
     HttpClientModule,
     IonicSelectableModule
   ],
@@ -126,7 +140,14 @@ import { LedgerDateSelectionPage } from '../pages/ledger-date-selection/ledger-d
     PopoverSortFiltersPage,
     ModalLedgerOptionsPage,
     LedgerListingDetailsPage,
-    LedgerDateSelectionPage
+    LedgerDateSelectionPage,
+    VisitHistoryPage,
+    VisitAddSitePage,
+    PunchEntryPage,
+    PunchExitPage,
+    PlaceaddressPage,
+    TestPage,
+    LocationsPage
   ],
   providers: [
     StatusBar,
@@ -149,7 +170,8 @@ import { LedgerDateSelectionPage } from '../pages/ledger-date-selection/ledger-d
     Diagnostic,
     CallNumber,
     SQLite,
-    DatabaseProvider
+    DatabaseProvider,
+    // Storage
   ]
 })
 export class AppModule { }

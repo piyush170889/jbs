@@ -86,6 +86,19 @@ export class DatabaseProvider {
     );
   }
 
+  getMetaData(configName: any) {
+
+    return Observable.fromPromise(
+      this.initializeSqlLiteDb().then((db: SQLiteObject) => {
+        return db.executeSql('SELECT data FROM metadata WHERE configname=?',
+          [configName])
+      })
+        .catch(e => {
+          console.log(JSON.stringify(e))
+        })
+    );
+  }
+
   syncCustomerData() {
 
     if (this.network.type != "unknown" && this.network.type != "none" && this.network.type != undefined) {
@@ -270,14 +283,14 @@ export class DatabaseProvider {
 
   getItem(configName: any) {
 
-      return this.initializeSqlLiteDb().then((db: SQLiteObject) => {
-        return db.executeSql('SELECT data FROM metadata WHERE configname=?',
-          [configName])
+    return this.initializeSqlLiteDb().then((db: SQLiteObject) => {
+      return db.executeSql('SELECT data FROM metadata WHERE configname=?',
+        [configName])
+    })
+      .catch(e => {
+        console.log(JSON.stringify(e));
+        // return Observable.throw(e);
       })
-        .catch(e => {
-          console.log(JSON.stringify(e));
-          // return Observable.throw(e);
-        })
   }
 
 
@@ -330,4 +343,5 @@ export class DatabaseProvider {
         }
       );
   }
+
 }

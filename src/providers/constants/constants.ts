@@ -62,6 +62,7 @@ export class ConstantsProvider {
   public static API_ENDPOINT_PENDING_INVOICES: string = 'pending-invoices';
   public static API_ENDPOINT_CUST_ALL_INVOICES = "all-invoices";
   public static API_ENDPOINT_SYNC = "sync";
+  public static API_ENDPOINT_SYNC_VISIT_DATA = "visits-sync";
 
   //Master Data JSON key names
   public static MD_UOM = "uom";
@@ -87,4 +88,8 @@ export class ConstantsProvider {
   public static CONFIG_DS_IMG_PATH = 'assets/imgs/stamp.jpg';
   public static CONFIG_NM_REFRESH_TOKEN = 'refresh-token';
   public static CONFIG_NM_ACCESS_TOKEN = 'token';
+  public static CONFIG_NM_VISITS_DATA = 'visits_history';
+  public static CONFIG_NM_LAST_UPDATED_TS_VISITS = 'visit_last_updated_ts';
+  public static CONFIG_NM_LOCATIONS_DATA = 'locations';
+
 }

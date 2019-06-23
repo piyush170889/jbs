@@ -16,6 +16,9 @@ import { Diagnostic } from '@ionic-native/diagnostic';
 import { LocationTrackerProvider } from '../providers/location-tracker/location-tracker';
 import { DatabaseProvider } from '../providers/database/database';
 import { SQLiteObject } from '@ionic-native/sqlite';
+import { VisitHistoryPage } from '../pages/visit-history/visit-history';
+import { TestPage } from '../pages/test/test';
+import { LocationsPage } from '../pages/locations/locations';
 
 const config = {
     apiKey: 'AIzaSyAwE6RUI2st4uTM40fotjuPJVRJNfuayko',
@@ -47,11 +50,13 @@ export class MyApp {
         private databaseProvider: DatabaseProvider
     ) {
         // console.log('Refresh Token = ' + localStorage.getItem('refresh-token'));
-        this.rootPage = localStorage.getItem('refresh-token') == null ? LoginPage : AuthorizatonSettingsPage;
+        // this.rootPage = localStorage.getItem('refresh-token') == null ? LoginPage : AuthorizatonSettingsPage;
+        this.rootPage = TestPage;
 
-        // this.pages.push(
-        // { title: 'TestPage', component: TestPage }
-        // );
+        this.pages.push(
+            { title: 'TestPage', component: TestPage }
+        );
+
         platform.ready().then(() => {
             // Okay, so the platform is ready and our plugins are available.
             // Here you can do any higher level native things you might need.
@@ -168,12 +173,16 @@ export class MyApp {
                                 { title: 'Customer Management', component: CustomerMgmtPage },
                                 { title: 'Orders', component: OrderMgmtPage },
                                 { title: 'Users Mgmt', component: AdminUsersPage },
+                                { title: 'Visits', component: VisitHistoryPage },
+                                { title: 'Locations', component: LocationsPage },
                                 { title: 'Settings', component: SettingsPage },
                             );
                         } else if (rolesArray.indexOf(ConstantsProvider.ROLE_SALES) > -1) {
                             console.log('ROLE_SALES Matched');
                             this.pages.push(
                                 { title: 'Customer Management', component: CustomerMgmtPage },
+                                { title: 'Visits', component: VisitHistoryPage },
+                                { title: 'Locations', component: LocationsPage },
                                 { title: 'Orders', component: OrderMgmtPage },
                                 { title: 'Settings', component: SettingsPage }
                             );
