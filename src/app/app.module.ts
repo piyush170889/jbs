@@ -60,6 +60,7 @@ import { PlaceaddressPage } from '../pages/placeaddress/placeaddress';
 import { TestPage } from '../pages/test/test';
 import { LocationsPage } from '../pages/locations/locations';
 import { SignaturePadModule } from 'angular2-signaturepad';
+import { SignaturepadPage } from '../pages/signaturepad/signaturepad';
 // import { Storage } from '@ionic/storage';
 
 
@@ -101,7 +102,8 @@ import { SignaturePadModule } from 'angular2-signaturepad';
     PunchExitPage,
     PlaceaddressPage,
     TestPage,
-    LocationsPage
+    LocationsPage,
+    SignaturepadPage
   ],
   imports: [
     BrowserModule,
@@ -147,7 +149,8 @@ import { SignaturePadModule } from 'angular2-signaturepad';
     PunchExitPage,
     PlaceaddressPage,
     TestPage,
-    LocationsPage
+    LocationsPage,
+    SignaturepadPage
   ],
   providers: [
     StatusBar,
@@ -170,8 +173,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
     Diagnostic,
     CallNumber,
     SQLite,
-    DatabaseProvider,
-    // Storage
+    DatabaseProvider
   ]
 })
 export class AppModule { }
