@@ -3,3 +3,5 @@ npm install moment --save-prod
 
 npm install moment-timezone --save-prod
 
+#Signature Pad
+npm install angular2-signaturepad --save
