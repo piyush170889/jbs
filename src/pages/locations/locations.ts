@@ -112,7 +112,7 @@ export class LocationsPage {
 
           let updatedGeoFenceData: GeoFence = addUpdateGeoFenceModalData.geoFenceData;
 
-          let addLocationApiEndpoint: string = ConstantsProvider.API_BASE_URL + ConstantsProvider.LOCATION_TRACKING_URL;
+          let addLocationApiEndpoint: string = ConstantsProvider.API_BASE_URL + ConstantsProvider.LOCATION_ADD_URL;
 
           this.restService.postDetails(addLocationApiEndpoint, updatedGeoFenceData)
             .subscribe(

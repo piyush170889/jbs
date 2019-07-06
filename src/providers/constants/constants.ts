@@ -39,6 +39,8 @@ export class ConstantsProvider {
   public static API_ENDPOINT_OAUTH = "oauth/token";
   public static URL_PARAM_LIMIT = "&limit=";
   public static LOCATION_TRACKING_URL = "ext/location";
+  public static LOCATION_ADD_URL = "location";
+
 
   //API Endpoints
   public static API_ENDPOINT_ROLES = ConstantsProvider.API_ENDPOINT_USERS
