@@ -50,8 +50,8 @@ export class MyApp {
         private databaseProvider: DatabaseProvider
     ) {
         // console.log('Refresh Token = ' + localStorage.getItem('refresh-token'));
-        // this.rootPage = localStorage.getItem('refresh-token') == null ? LoginPage : AuthorizatonSettingsPage;
-        this.rootPage = TestPage;
+        this.rootPage = localStorage.getItem('refresh-token') == null ? LoginPage : AuthorizatonSettingsPage;
+        // this.rootPage = TestPage;
 
         this.pages.push(
             { title: 'TestPage', component: TestPage }

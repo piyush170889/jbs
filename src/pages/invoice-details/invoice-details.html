@@ -147,6 +147,24 @@
     </ion-col>
   </ion-row>
 
+  <ion-row style="margin-top: 5%;">
+    <ion-col col-12 no-margin class="pj-full-width-border">
+      ACKNOWLEDGEMENT
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="this.signature != ''">
+    <ion-col col-12>
+      <img [src]="signature" />
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="this.signature == ''">
+    <ion-col col-12>
+      <button ion-button class="pj-button" type="button" (click)="takeAcknowledgement()">ADD</button>
+    </ion-col>
+  </ion-row>
+
   <div id="pdfDiv" style="display: none">
     <div style="text-align:center;width:90%">
       TAX INVOICE

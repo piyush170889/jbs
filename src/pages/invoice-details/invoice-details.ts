@@ -9,6 +9,7 @@ import { DatePipe } from '@angular/common';
 import { CustomerDetailsPage } from '../customer-details/customer-details';
 import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
 import * as moment from 'moment-timezone';
+import { SignaturepadPage } from '../signaturepad/signaturepad';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -29,19 +30,20 @@ declare var cordova: any;
 export class InvoiceDetailsPage {
 
   customer: any = {
-    customerDetails : {}
+    customerDetails: {}
   };
   fromDate: string = '';
   invoice: any = {
-    invoiceItemsList : [{}]
+    invoiceItemsList: [{}]
   };
   pdfObj = null;
   pdf: any;
   totalTax: number = 0;
   imgPath: string = '';
   momentjs: any = moment;
+  signature: any = '';
 
-  
+
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public file: File,
@@ -51,11 +53,11 @@ export class InvoiceDetailsPage {
     private commonUtility: CommonUtilityProvider,
     private platform: Platform) {
 
-      console.log('Inside Invoice Details Page new');
+    console.log('Inside Invoice Details Page new');
 
-      this.platform.ready().then(() => {
-          this.imgPath = cordova.file.applicationDirectory + 'www/assets/imgs/stamp.jpg';
-      });
+    this.platform.ready().then(() => {
+      this.imgPath = cordova.file.applicationDirectory + 'www/assets/imgs/stamp.jpg';
+    });
 
     // this.customer = this.navParams.get('customer');
     // this.fromDate = this.navParams.get('fromDate');
@@ -67,26 +69,30 @@ export class InvoiceDetailsPage {
   }
 
   ionViewDidLoad() {
+
     console.log('ionViewDidLoad InvoiceDetailsPage');
 
-
     this.customer = this.navParams.get('customer');
-    console.log('this.customer = ' + JSON.stringify(this.customer));
     this.fromDate = this.navParams.get('fromDate');
-    console.log('this.fromDate = ' + JSON.stringify(this.fromDate));
-
     this.invoice = this.navParams.get('invoice');
-    console.log('this.invoice = ' + JSON.stringify(this.invoice));
-    
-    this.invoice.invoiceDate = this.invoice.invoiceDate.toISOString();
+
+    this.signature = this.invoice.signature == null || this.invoice.signature == '' ? '' : this.invoice.signature;
+    console.log('Signature Form API = ' + this.invoice.signature + '\n signature Stored = ' + this.signature);
+
+    console.log('this.customer = ' + JSON.stringify(this.customer)
+      + ' \n this.fromDate = ' + JSON.stringify(this.fromDate)
+      + ' \n this.invoice = ' + JSON.stringify(this.invoice));
+
     console.log('this.invoice.invoiceDate = ' + JSON.stringify(this.invoice.invoiceDate));
+    this.invoice.invoiceDate = this.invoice.invoiceDate == null || this.invoice.invoiceDate == '' ? ''
+      : new Date(this.invoice.invoiceDate).toISOString();
 
     this.totalTax = 0;
 
     if (null != this.invoice.invoiceItemsList && this.invoice.invoiceItemsList.length > 0) {
-    this.totalTax = Number.parseFloat(this.invoice.invoiceItemsList[0].cgstTax)
-      + Number.parseFloat(this.invoice.invoiceItemsList[0].sgstTax);
-    console.log('total Tax: ' + this.totalTax);
+      this.totalTax = Number.parseFloat(this.invoice.invoiceItemsList[0].cgstTax)
+        + Number.parseFloat(this.invoice.invoiceItemsList[0].sgstTax);
+      console.log('total Tax: ' + this.totalTax);
     }
   }
 
@@ -103,11 +109,11 @@ export class InvoiceDetailsPage {
   ionViewWillLeave() {
     console.log('ionViewWillLeave loaded');
   }
-  
+
   ionViewDidLeave() {
     console.log('ionViewDidLeave loaded');
   }
-  
+
   downloadReport() {
 
     console.log('downloadReport InvoiceDetailsPage');
@@ -383,4 +389,17 @@ export class InvoiceDetailsPage {
 
     customerDetailsModal.present();
   }
+
+  takeAcknowledgement() {
+
+    console.log('takeAcknowledgement InvoiceDetailsPage');
+
+    this.navCtrl.push(SignaturepadPage, {
+      invoice: this.invoice,
+      customer: this.customer,
+      signature: this.signature,
+      fromDate: this.fromDate
+    })
+  }
+
 }

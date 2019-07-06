@@ -17,7 +17,7 @@ export class ConstantsProvider {
   //Common API Constants
 
   // LOCAL
-  // public static API_BASE_URL: string = "http://127.0.0.1:8080/sapbasemodule/v1/";
+  public static API_BASE_URL: string = "http://192.168.43.162:8080/sapbasemodule/v1/";
 
   //DEV
   // public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapitest/v1/";
@@ -27,7 +27,7 @@ export class ConstantsProvider {
   // public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapitest/v1/";
 
   // PRODUCTION
-  public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapi/v1/";
+  // public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapi/v1/";
 
 
   //API Endpoints
@@ -63,6 +63,7 @@ export class ConstantsProvider {
   public static API_ENDPOINT_CUST_ALL_INVOICES = "all-invoices";
   public static API_ENDPOINT_SYNC = "sync";
   public static API_ENDPOINT_SYNC_VISIT_DATA = "visits-sync";
+  public static API_ENDPOINT_INVOICE_ACKNOWLEDGEMENT = "invoice-acknowledgement";
 
   //Master Data JSON key names
   public static MD_UOM = "uom";

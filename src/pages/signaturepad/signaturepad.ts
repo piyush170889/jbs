@@ -2,6 +2,11 @@ import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { SignaturePad } from 'angular2-signaturepad/signature-pad';
 import { RestserviceProvider } from '../../providers/restservice/restservice';
+import * as moment from 'moment-timezone';
+import { ConstantsProvider } from '../../providers/constants/constants';
+import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
+import { InvoiceDetailsPage } from '../invoice-details/invoice-details';
+
 
 /**
  * Generated class for the SignaturepadPage page.
@@ -19,9 +24,15 @@ export class SignaturepadPage {
 
   signature = '';
   isDrawing = false;
+  momentjs: any = moment;
+  customer: any = {
+    customerDetails: {}
+  };
+  fromDate: any = '';
 
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
   invoiceNo: string = '';
+  invoice: any = {};
 
   private signaturePadOptions: Object = { // Check out https://github.com/szimek/signature_pad
     'minWidth': 2,
@@ -34,7 +45,8 @@ export class SignaturepadPage {
   constructor(
     private navCtrl: NavController,
     private restService: RestserviceProvider,
-    private navParams: NavParams) {
+    private navParams: NavParams,
+    private commonUtility: CommonUtilityProvider) {
 
   }
 
@@ -43,8 +55,11 @@ export class SignaturepadPage {
     console.log('ionViewDidEnter SignaturePad');
     this.signaturePad.clear();
 
-    this.invoiceNo = this.navParams.get('invoiceNo');
+    this.invoice = this.navParams.get('invoice');
+    this.invoiceNo = this.invoice.invoiceNo;
+    this.customer = this.navParams.get('customer');
     this.signature = this.navParams.get('signature');
+    this.fromDate = this.navParams.get('fromDate');
 
     console.log('Invoice No. = ' + this.invoiceNo + ', Signature = ' + this.signature);
   }
@@ -58,16 +73,48 @@ export class SignaturepadPage {
   }
 
   savePad() {
-    this.signature = this.signaturePad.toDataURL();
-    console.log('Signature to Save = ' + this.signature);
 
-    this.signaturePad.clear();
+    console.log('Signature to Save = ' + this.signaturePad.toDataURL());
 
-    let toast = this.toastCtrl.create({
-      message: 'New Signature saved.',
-      duration: 3000
-    });
-    toast.present();
+    let invoiceAcknowledgementApiEndpoint: string = ConstantsProvider.API_BASE_URL
+      + ConstantsProvider.API_ENDPOINT_CUST_DTLS + ConstantsProvider.URL_SEPARATOR + this.invoiceNo
+      + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_INVOICE_ACKNOWLEDGEMENT;
+
+    let signatureToSave: any = this.signaturePad.toDataURL();
+
+    let data: any = {
+      signature: signatureToSave
+    }
+
+    console.log('invoiceAcknowledgementApiEndpoint = ' + invoiceAcknowledgementApiEndpoint
+      + ', Data = ' + JSON.stringify(data));
+
+    this.restService.postDetails(invoiceAcknowledgementApiEndpoint, data)
+      .subscribe(
+        (response) => {
+
+          console.log('Response = ' + JSON.stringify(response));
+
+          this.invoice.signature = signatureToSave;
+
+          this.signaturePad.clear();
+
+          this.navCtrl.pop();
+          this.navCtrl.pop();
+
+          this.navCtrl.push(InvoiceDetailsPage, {
+            customer: this.customer,
+            fromDate: this.fromDate,
+            invoice: this.invoice
+          });
+        },
+        (err) => {
+          console.log('Error = ' + JSON.stringify(err));
+          this.commonUtility.presentErrorToast('Could Not Save Acknowledgement. Please try again');
+        }
+      )
+    // this.signature = this.signaturePad.toDataURL();
+
   }
 
   clearPad() {
