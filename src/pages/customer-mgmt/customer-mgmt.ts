@@ -59,19 +59,21 @@ export class CustomerMgmtPage {
 
     this.databaseProvider.getLastUpdatedTs()
       .subscribe(response => {
-        this.tillDate = response.rows.item(0).data;
-        console.log('tillDate = ' + this.tillDate + ', Response = ' + JSON.stringify(response));
+        if (response) {
+          this.tillDate = response.rows.item(0).data;
+          console.log('tillDate = ' + this.tillDate + ', Response = ' + JSON.stringify(response));
 
-        this.updateCustomerDataFromDB();
+          this.updateCustomerDataFromDB();
 
-        let timeSinceLastSync: number = this.commonUtility.calculateDiffInMins(new Date(this.tillDate), new Date());
-        console.log('Till Date : ' + this.tillDate + ', Current Date = ' + new Date() + ', timeSinceLastSync = ' + timeSinceLastSync);
+          let timeSinceLastSync: number = this.commonUtility.calculateDiffInMins(new Date(this.tillDate), new Date());
+          console.log('Till Date : ' + this.tillDate + ', Current Date = ' + new Date() + ', timeSinceLastSync = ' + timeSinceLastSync);
 
-        if (timeSinceLastSync >= 30) {
-          console.log('Synching Data');
-          this.syncCustomerData();
-        } else {
-          console.log('Not Synching Data');
+          if (timeSinceLastSync >= 30) {
+            console.log('Synching Data');
+            this.syncCustomerData();
+          } else {
+            console.log('Not Synching Data');
+          }
         }
       }
       );

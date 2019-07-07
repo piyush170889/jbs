@@ -6,13 +6,23 @@
 -->
 <ion-header>
 
-  
+
   <ion-navbar color="navbar" text-center>
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>Locations</ion-title>
   </ion-navbar>
+
+  <ion-row style="background-color: #2F3C51 !important; color: #FFCB08 !important">
+    <ion-col col-10 text-center>
+      Last Synced: {{ tillDate == null || tillDate == '' ? 'Not Available' : momentjs(tillDate).format('DD MMM YY hh:mm a')}}
+    </ion-col>
+    <ion-col col-2 text-center>
+      <ion-icon ios="ios-refresh" (click)="syncLocationData()" md="md-refresh" *ngIf="!isDataSynching"></ion-icon>
+      <ion-spinner name="crescent" *ngIf="isDataSynching" color="plain"></ion-spinner>
+    </ion-col>
+  </ion-row>
 
 </ion-header>
 

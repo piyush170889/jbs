@@ -39,7 +39,7 @@ export class ConstantsProvider {
   public static API_ENDPOINT_OAUTH = "oauth/token";
   public static URL_PARAM_LIMIT = "&limit=";
   public static LOCATION_TRACKING_URL = "ext/location";
-  public static LOCATION_ADD_URL = "location";
+  public static LOCATION_URL = "location";
 
 
   //API Endpoints
@@ -94,5 +94,6 @@ export class ConstantsProvider {
   public static CONFIG_NM_VISITS_DATA = 'visits_history';
   public static CONFIG_NM_LAST_UPDATED_TS_VISITS = 'visit_last_updated_ts';
   public static CONFIG_NM_LOCATIONS_DATA = 'locations';
+  public static CONFIG_NM_LOCATION_UPDATE_TS = 'location_last_updated_ts';
 
 }

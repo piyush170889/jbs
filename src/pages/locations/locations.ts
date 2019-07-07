@@ -6,6 +6,10 @@ import { CommonUtilityProvider } from '../../providers/common-utility/common-uti
 import { RestserviceProvider } from '../../providers/restservice/restservice';
 import { GeoFence } from '../visit-add-site/domain-geofence';
 import { VisitAddSitePage } from '../visit-add-site/visit-add-site';
+import { Network } from '@ionic-native/network';
+import { SQLiteObject } from '@ionic-native/sqlite';
+import * as moment from 'moment-timezone';
+
 
 /**
  * Generated class for the LocationsPage page.
@@ -13,6 +17,7 @@ import { VisitAddSitePage } from '../visit-add-site/visit-add-site';
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
  */
+
 
 @IonicPage()
 @Component({
@@ -22,6 +27,9 @@ import { VisitAddSitePage } from '../visit-add-site/visit-add-site';
 export class LocationsPage {
 
   locationsList: any[] = [];
+  tillDate: any = '';
+  isDataSynching: boolean = false;
+  momentjs: any = moment;
 
 
   constructor(public navCtrl: NavController,
@@ -29,7 +37,9 @@ export class LocationsPage {
     private databaseProvider: DatabaseProvider,
     private commonUtility: CommonUtilityProvider,
     private restService: RestserviceProvider,
-    private modal: ModalController) {
+    private modal: ModalController,
+    private network: Network
+  ) {
   }
 
   ionViewDidLoad() {
@@ -39,8 +49,117 @@ export class LocationsPage {
   ionViewDidEnter() {
 
     console.log('ionViewDidEnter LocationsPage');
-
     this.updateLocationFromDb();
+
+    this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_LOCATION_UPDATE_TS)
+      .subscribe(response => {
+
+        console.log('Response = ' + JSON.stringify(response));
+
+        if (response && response.rows.length > 0) {
+
+          this.tillDate = response.rows.item(0).data;
+          console.log('tillDate = ' + this.tillDate + ', Response = ' + JSON.stringify(response));
+
+
+          let timeSinceLastSync: number = this.commonUtility.calculateDiffInMins(new Date(this.tillDate), new Date());
+          console.log('Till Date : ' + this.tillDate + ', Current Date = ' + new Date() + ', timeSinceLastSync = ' + timeSinceLastSync);
+
+          if (timeSinceLastSync >= 30) {
+            console.log('Synching Data');
+            this.syncLocationData();
+          } else {
+            console.log('Not Synching Data');
+          }
+        } else {
+          this.syncLocationData();
+        }
+      }
+      );
+
+  }
+
+  syncLocationData() {
+
+    console.log('Synching Data');
+    this.isDataSynching = true;
+
+    if (this.network.type != "unknown" && this.network.type != "none" && this.network.type != undefined) {
+
+      let locationDataApiEndpoint: string = ConstantsProvider.API_BASE_URL + ConstantsProvider.LOCATION_URL;
+
+      this.restService.getDetailsWithoutLoader(locationDataApiEndpoint)
+        .subscribe(
+          (response) => {
+            this.isDataSynching = false;
+
+            console.log('Location Data = ' + JSON.stringify(response.response));
+            let locationDetailsList: any[] = response.response;
+
+            this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
+
+              db.executeSql('SELECT data from metadata where configname=?',
+                [ConstantsProvider.CONFIG_NM_LOCATIONS_DATA])
+                .then(
+                  res => {
+                    if (res.rows.length > 0) {
+                      this.updateLocationsDetailsFromApi(locationDetailsList);
+                    } else {
+                      db.executeSql('INSERT INTO metadata(configname, data) VALUES(?,?)',
+                        [ConstantsProvider.CONFIG_NM_LOCATIONS_DATA, JSON.stringify(locationDetailsList)])
+                        .then(res => {
+
+                          console.log('Inserted Location Record');
+
+                          this.updateLocationLastUpdatedTs();
+                          this.isDataSynching = false;
+                        })
+                        .catch(e => {
+                          console.log(JSON.stringify(e))
+                          this.isDataSynching = false;
+                        })
+                    }
+                  }
+                )
+                .catch(e => {
+                  console.log(JSON.stringify(e))
+                  this.isDataSynching = false;
+                })
+            })
+              .catch(e => {
+                console.log(JSON.stringify(e))
+                this.isDataSynching = false;
+              })
+          },
+          (err) => {
+            this.isDataSynching = false;
+          }
+        );
+    } else {
+      this.commonUtility.presentErrorToast('No Internet Connection');
+      this.isDataSynching = false;
+    }
+  }
+
+  updateLocationsDetailsFromApi(locationDetailsList: any[]) {
+
+    this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
+      db.executeSql('UPDATE metadata set data=? WHERE configname=?', [JSON.stringify(locationDetailsList),
+      ConstantsProvider.CONFIG_NM_LOCATIONS_DATA])
+        .then(
+          res => {
+            console.log('Updated Location Record');
+
+            this.updateLocationLastUpdatedTs();
+          }
+        )
+        .catch(e => {
+          console.log(JSON.stringify(e))
+        });
+    })
+      .catch(e => {
+        console.log(JSON.stringify(e))
+      })
   }
 
   // updateLocationFromDb() {
@@ -49,13 +168,13 @@ export class LocationsPage {
   //       (res) => {
   //         if (res && res != undefined) {
 
-  //         if (res.rows.length > 0) {
+  //           if (res.rows.length > 0) {
 
-  //           console.log('Locations Data = ' + res.rows.item(0).data);
+  //             console.log('Locations Data = ' + res.rows.item(0).data);
 
-  //           this.locationsList = res.rows.item(0).data;
+  //             this.locationsList = JSON.parse(res.rows.item(0).data);
+  //           }
   //         }
-  //          }  
   //       }
   //     );
   // }
@@ -112,7 +231,7 @@ export class LocationsPage {
 
           let updatedGeoFenceData: GeoFence = addUpdateGeoFenceModalData.geoFenceData;
 
-          let addLocationApiEndpoint: string = ConstantsProvider.API_BASE_URL + ConstantsProvider.LOCATION_ADD_URL;
+          let addLocationApiEndpoint: string = ConstantsProvider.API_BASE_URL + ConstantsProvider.LOCATION_URL;
 
           this.restService.postDetails(addLocationApiEndpoint, updatedGeoFenceData)
             .subscribe(
@@ -139,5 +258,10 @@ export class LocationsPage {
             );
         }
       });
+  }
+
+  updateLocationLastUpdatedTs() {
+
+    this.databaseProvider.setItem(ConstantsProvider.CONFIG_NM_LOCATION_UPDATE_TS, new Date().toISOString());
   }
 }
