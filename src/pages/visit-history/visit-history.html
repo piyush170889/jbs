@@ -23,7 +23,8 @@
   </ion-navbar>
   <ion-row style="background-color: #2F3C51 !important; color: #FFCB08 !important">
     <ion-col col-10 text-center>
-      Last Synced: {{ momentjs(tillDate).format('DD MMM YY hh:mm a') }}
+      Last Synced: {{ tillDate == null || tillDate == '' ? 'Not Available' : momentjs(tillDate).format('DD MMM YY hh:mm
+      a') }}
     </ion-col>
     <ion-col col-2 text-center>
       <ion-icon ios="ios-refresh" (click)="syncVisitData()" md="md-refresh" *ngIf="!isDataSynching"></ion-icon>
@@ -67,7 +68,7 @@
     <ion-card-header>
       <ion-row>
         <ion-col col-12>
-          <p style="color: #FFCB08 !important"><strong>{{ visitHistory.locationName }}</strong></p>
+          <p style="color: #FFCB08 !important"><strong>{{ visitHistory.siteDtls.geofenceName }}</strong></p>
         </ion-col>
       </ion-row>
     </ion-card-header>
@@ -76,10 +77,11 @@
 
       <ion-row>
         <ion-col col-4>
-          Entry Time
+          Entry
         </ion-col>
         <ion-col col-8>
-          {{visitHistory.entryTime}}
+          <!-- {{ momentjs(visitHistory.entryDt).format('DD MMM YY') }} {{ momentjs(visitHistory.entryTm).format('hh:mm a') }} -->
+          {{ visitHistory.entryDt }} {{ visitHistory.entryTm }}
         </ion-col>
       </ion-row>
 
@@ -92,28 +94,39 @@
         </ion-col>
       </ion-row>
 
-      <ion-row>
-        <ion-col col-4>
-          Exit Time
-        </ion-col>
-        <ion-col col-8>
-          {{ visitHistory.exitTime == null || visitHistory.exitTime == '' ? 'Not Punched' : visitHistory.exitTime }}
-        </ion-col>
-      </ion-row>
+      <div *ngIf="visitHistory.exitDt == null || visitHistory.exitDt == ''">
+        <ion-row>
+          <ion-col col-12>
+            <button ion-button class="pj-button" type="button" (click)="punchExit(visitHistory)">PUNCH EXIT</button>
+          </ion-col>
+        </ion-row>
+      </div>
 
-      <ion-row *ngIf="visitHistory.exitTime != null && visitHistory.exitTime != ''">
-        <ion-col col-12 class="stock-table-header">
-          Remarks
-        </ion-col>
-        <ion-col col-12>
-          {{ visitHistory.remarks }}
-        </ion-col>
-      </ion-row>
+      <div *ngIf="visitHistory.exitDt != null && visitHistory.exitDt != ''">
+        <ion-row>
+          <ion-col col-4>
+            Exit
+          </ion-col>
+          <ion-col col-8>
+            {{ visitHistory.exitDt == null || visitHistory.exitDt == '' ? 'Not Punched' : visitHistory.exitDt }}
+            {{ visitHistory.exitTs == null || visitHistory.exitTs == '' ? '' : visitHistory.exitTs }}
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col col-12 class="stock-table-header">
+            Remarks
+          </ion-col>
+          <ion-col col-12>
+            {{ visitHistory.remarks }}
+          </ion-col>
+        </ion-row>
+      </div>
 
     </ion-card-content>
   </ion-card>
 
-  <ion-fab bottom right>
+  <!-- <ion-fab bottom right>
     <button ion-fab mini>
       <ion-icon name="add"></ion-icon>
     </button>
@@ -122,10 +135,15 @@
         <ion-icon name="logo-facebook"></ion-icon>
       </button>
       <button ion-fab>
-          Exit
         <ion-icon name="logo-twitter"></ion-icon>
       </button>
     </ion-fab-list>
+  </ion-fab> -->
+
+  <ion-fab bottom right>
+    <button class="add-button" color="primary" ion-fab (click)="punchEntry()">
+      <ion-icon name="add"></ion-icon>
+    </button>
   </ion-fab>
 
 </ion-content>

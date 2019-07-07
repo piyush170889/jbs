@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
 
 /**
  * Generated class for the PunchExitPage page.
@@ -15,11 +16,56 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class PunchExitPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  remarks: string = '';
+  visitHistory: any = {
+    siteDtls: {}
+  };
+  isPendingRequest: boolean = false;
+
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private view: ViewController,
+    private commonUtility: CommonUtilityProvider
+  ) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad PunchExitPage');
   }
 
+  ionViewDidEnter() {
+
+    console.log('ionViewDidEnter PunchExitPage');
+
+    this.visitHistory = this.navParams.get('visitHistory');
+    this.isPendingRequest = this.navParams.get('isPendingRequest');
+
+    console.log('visitHistory = ' + JSON.stringify(this.visitHistory) + ', isPendingRequest = ' + this.isPendingRequest);
+  }
+
+  dismissModal() {
+    const modalData = {
+      isAdded: false
+    };
+    this.view.dismiss(modalData);
+  }
+
+  punchExit() {
+
+    console.log('punchExit PunchExitPage');
+
+    if (this.remarks == null || this.remarks == undefined || this.remarks == '') {
+      this.commonUtility.presentErrorToast('Please fill in some remarks for your visit');
+    } else {
+      this.visitHistory.remarks = this.remarks;
+      
+      let punchExitModalData = {
+        isAdded: true,
+        punchExitData: this.visitHistory
+      }
+
+      this.view.dismiss(punchExitModalData);
+    }
+  }
 }

@@ -66,6 +66,8 @@ export class ConstantsProvider {
   public static API_ENDPOINT_SYNC = "sync";
   public static API_ENDPOINT_SYNC_VISIT_DATA = "visits-sync";
   public static API_ENDPOINT_INVOICE_ACKNOWLEDGEMENT = "invoice-acknowledgement";
+  public static API_ENDPOINT_PUNCH_SITE_ENTRY = "punch-visit-entry";
+  public static API_ENDPOINT_PUNCH_SITE_EXIT = "punch-visit-exit";
 
   //Master Data JSON key names
   public static MD_UOM = "uom";

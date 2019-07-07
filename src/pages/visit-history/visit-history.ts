@@ -10,6 +10,7 @@ import { Network } from '@ionic-native/network';
 import { DatabaseProvider } from '../../providers/database/database';
 import { GeoFence } from '../visit-add-site/domain-geofence';
 import { PunchEntryPage } from '../punch-entry/punch-entry';
+import { PunchExitPage } from '../punch-exit/punch-exit';
 
 
 /**
@@ -36,7 +37,8 @@ export class VisitHistoryPage {
   locationsList: GeoFence[] = [];
 
 
-  constructor(public navCtrl: NavController,
+  constructor(
+    public navCtrl: NavController,
     public navParams: NavParams,
     private commonUtility: CommonUtilityProvider,
     private network: Network,
@@ -50,11 +52,10 @@ export class VisitHistoryPage {
 
     this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_LAST_UPDATED_TS_VISITS)
       .subscribe(response => {
-        if (response.rows.length > 0) {
+        if (response && response.rows.length > 0) {
 
           this.tillDate = response.rows.item(0).data;
           console.log('tillDate = ' + this.tillDate + ', Response = ' + JSON.stringify(response));
-
 
           let timeSinceLastSync: number = this.commonUtility.calculateDiffInMins(new Date(this.tillDate), new Date());
           console.log('Till Date : ' + this.tillDate + ', Current Date = ' + new Date() + ', timeSinceLastSync = ' + timeSinceLastSync);
@@ -66,6 +67,7 @@ export class VisitHistoryPage {
             console.log('Not Synching Data');
           }
         } else {
+          console.log('Synching Data');
           this.syncVisitData();
         }
       }
@@ -86,65 +88,66 @@ export class VisitHistoryPage {
 
   syncVisitData() {
 
-    //   console.log('syncVisitData VisitHistoryPage');
+    console.log('syncVisitData VisitHistoryPage');
 
-    //   let adminUsersLocationDetailsApiEndpoint = ConstantsProvider.API_BASE_URL
-    //     + ConstantsProvider.API_ENDPOINT_ADMIN_USERS + ConstantsProvider.URL_SEPARATOR
-    //     + ConstantsProvider.API_ENDPOINT_SYNC_VISIT_DATA;
+    let adminUsersLocationDetailsApiEndpoint = ConstantsProvider.API_BASE_URL
+      + ConstantsProvider.API_ENDPOINT_USERS + ConstantsProvider.URL_SEPARATOR
+      + ConstantsProvider.API_ENDPOINT_ADMIN_USERS + ConstantsProvider.URL_SEPARATOR
+      + ConstantsProvider.API_ENDPOINT_SYNC_VISIT_DATA;
+    console.log('adminUsersLocationDetailsApiEndpoint = ' + adminUsersLocationDetailsApiEndpoint);
 
+    if (this.network.type != "unknown" && this.network.type != "none" && this.network.type != undefined) {
 
-    //   if (this.network.type != "unknown" && this.network.type != "none" && this.network.type != undefined) {
+      this.isDataSynching = true;
 
-    //     this.isDataSynching = true;
+      this.restService.getDetailsWithoutLoader(adminUsersLocationDetailsApiEndpoint)
+        .subscribe(
+          (response) => {
+            this.isDataSynching = false;
 
-    //     this.restService.getDetailsWithoutLoader(adminUsersLocationDetailsApiEndpoint)
-    //       .subscribe(
-    //         (response) => {
-    //           this.isDataSynching = false;
+            console.log('Visit History Data = ' + JSON.stringify(response.response));
+            let visitDetailsList: any[] = response.response;
 
-    //           console.log('Visit History Data = ' + JSON.stringify(response.response));
-    //           let visitDetailsList: any[] = response.response;
+            this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
 
-    //           this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
-
-    //             db.executeSql('SELECT data from metadata where configname=?',
-    //               [ConstantsProvider.CONFIG_NM_VISITS_DATA])
-    //               .then(
-    //                 res => {
-    //                   if (res.rows.length > 0) {
-    //                     this.updateVisitDetailsFromApi(visitDetailsList);
-    //                   } else {
-    //                     db.executeSql('INSERT INTO metadata(configname, data) VALUES(?,?)',
-    //                       [ConstantsProvider.CONFIG_NM_VISITS_DATA, '{}'])
-    //                       .then(res => {
-    //                         console.log('Inserted Empty Visits Record');
-    //                         this.updateVisitDetailsFromApi(visitDetailsList);
-    //                       })
-    //                       .catch(e => {
-    //                         console.log(JSON.stringify(e))
-    //                         this.isDataSynching = false;
-    //                       })
-    //                   }
-    //                 }
-    //               )
-    //               .catch(e => {
-    //                 console.log(JSON.stringify(e))
-    //                 this.isDataSynching = false;
-    //               })
-    //           })
-    //             .catch(e => {
-    //               console.log(JSON.stringify(e))
-    //               this.isDataSynching = false;
-    //             })
-    //         },
-    //         (err) => {
-    //           this.isDataSynching = false;
-    //         }
-    //       );
-    //   } else {
-    //     this.commonUtility.presentErrorToast('No Internet Connection');
-    //     this.isDataSynching = false;
-    //   }
+              db.executeSql('SELECT data from metadata where configname=?',
+                [ConstantsProvider.CONFIG_NM_VISITS_DATA])
+                .then(
+                  res => {
+                    if (res.rows.length > 0) {
+                      this.updateVisitDetailsFromApi(visitDetailsList);
+                    } else {
+                      db.executeSql('INSERT INTO metadata(configname, data) VALUES(?,?)',
+                        [ConstantsProvider.CONFIG_NM_VISITS_DATA, JSON.stringify(visitDetailsList)])
+                        .then(res => {
+                          console.log('Inserted Visits Record');
+                          this.updateLastUpdatedTs();
+                        })
+                        .catch(e => {
+                          console.log(JSON.stringify(e))
+                          this.isDataSynching = false;
+                        })
+                    }
+                  }
+                )
+                .catch(e => {
+                  console.log(JSON.stringify(e))
+                  this.isDataSynching = false;
+                })
+            })
+              .catch(e => {
+                console.log(JSON.stringify(e))
+                this.isDataSynching = false;
+              })
+          },
+          (err) => {
+            this.isDataSynching = false;
+          }
+        );
+    } else {
+      this.commonUtility.presentErrorToast('No Internet Connection');
+      this.isDataSynching = false;
+    }
   }
 
   onInput() {
@@ -192,10 +195,10 @@ export class VisitHistoryPage {
                     this.updateLastUpdatedTs();
                   } else {
                     db.executeSql('INSERT INTO metadata(configname, data) VALUES(?,?)',
-                      [ConstantsProvider.CONFIG_NM_LAST_UPDATED_TS_VISITS, ''])
+                      [ConstantsProvider.CONFIG_NM_LAST_UPDATED_TS_VISITS, new Date().toISOString()])
                       .then(res => {
-                        console.log('Inserted Empty Visit History Last Updated Ts Record');
-                        this.updateLastUpdatedTs();
+                        console.log('Inserted Visit History Last Updated Ts Record');
+                        // this.updateLastUpdatedTs();
                       })
                       .catch(e => console.log(JSON.stringify(e)));
                   }
@@ -239,20 +242,20 @@ export class VisitHistoryPage {
 
     // this.putDummyData();
 
-    // this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_VISITS_DATA)
-    //   .subscribe(
-    //     res => {
-    //       if (res.rows.length > 0) {
-    //         console.log('Visit Data = ' + res.rows.item(0).data);
-    //         this.visitHistoryList = JSON.parse(res.rows.item(0).data);
-    //       }
+    this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_VISITS_DATA)
+      .subscribe(
+        res => {
+          if (res.rows.length > 0) {
+            console.log('Visit Data = ' + res.rows.item(0).data);
+            this.visitHistoryList = JSON.parse(res.rows.item(0).data);
+          }
 
-    //       this.orginalVisitList = this.visitHistoryList;
-    //       this.orginalListDuplicate = this.visitHistoryList;
-    //     }
-    //     , (e) => {
-    //       console.log(JSON.stringify(e));
-    //     });
+          this.orginalVisitList = this.visitHistoryList;
+          this.orginalListDuplicate = this.visitHistoryList;
+        }
+        , (e) => {
+          console.log(JSON.stringify(e));
+        });
   }
 
   putDummyData() {
@@ -345,6 +348,100 @@ export class VisitHistoryPage {
 
     console.log('punchEntry VisitHistoryPage');
 
-    this.navCtrl.push(PunchEntryPage);
+    let isExitPending: boolean = false;
+    let pendingExit: any;
+
+    this.visitHistoryList.forEach(
+      (visitHistory: any) => {
+
+        if (visitHistory.exitDt == null || visitHistory.exitDt == '') {
+          isExitPending = true;
+          pendingExit = visitHistory;
+        }
+      }
+    );
+
+    if (isExitPending) {
+      this.createPunchExitModal(pendingExit, true);
+    } else {
+      let punchEntryModal: Modal = this.modal.create(PunchEntryPage);
+
+      punchEntryModal.present();
+
+      punchEntryModal.onDidDismiss(
+        (punchEntryModalData) => {
+          console.log('punchEntryModalData = ' + JSON.stringify(punchEntryModalData));
+
+          if (punchEntryModalData.isAdded) {
+
+            let visitHistorySorted: any[] = [];
+            visitHistorySorted.push(punchEntryModalData.punchEntryData);
+            this.visitHistoryList = visitHistorySorted.concat(this.visitHistoryList);
+
+            this.databaseProvider.setItem(ConstantsProvider.CONFIG_NM_VISITS_DATA, JSON.stringify(this.visitHistoryList));
+
+            this.commonUtility.presentToast('Entry Punched Successfully', 5000);
+          }
+        }
+      );
+    }
+  }
+
+  punchExit(visitHistory: any) {
+
+    console.log('punchExit VisitHistoryPage');
+
+    this.createPunchExitModal(visitHistory, false);
+  }
+
+  createPunchExitModal(visitHistory: any, isPendingRequest: boolean) {
+
+    // Go To Punch Exit Page
+    let punchExitModal: Modal = this.modal.create(PunchExitPage, {
+        visitHistory: visitHistory,
+        isPendingRequest: isPendingRequest
+    });
+
+    punchExitModal.present();
+
+    punchExitModal.onDidDismiss(
+      (punchExitModalData) => {
+        console.log('punchExitModalData = ' + JSON.stringify(punchExitModalData));
+
+        if (punchExitModalData.isAdded) {
+
+          let punchExitApiEndpoint = ConstantsProvider.API_BASE_URL + ConstantsProvider.API_ENDPOINT_USERS
+            + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_ADMIN_USERS
+            + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_PUNCH_SITE_EXIT;
+
+          let punchExitData: any = punchExitModalData.punchExitData;
+
+          console.log('punchExitApiEndpoint = ' + punchExitApiEndpoint
+            + ', punchExitData = ' + JSON.stringify(punchExitData));
+
+          let punchExitApiData = {
+            siteVisitHistoryId: punchExitData.siteVisitHistoryId,
+            remarks: punchExitData.remarks
+          }
+
+          this.restService.putDetails(punchExitApiEndpoint, punchExitApiData)
+            .subscribe(
+              (response) => {
+                console.log('Response = ' + JSON.stringify(response.response));
+
+                let index = this.visitHistoryList.indexOf(visitHistory);
+                if (index > -1) {
+                  this.visitHistoryList[index] = response.response;
+
+                  this.databaseProvider.setItem(ConstantsProvider.CONFIG_NM_VISITS_DATA, JSON.stringify(this.visitHistoryList));
+
+                  this.commonUtility.presentToast('Exit Punched Successfully', 5000);
+                }
+              }
+            );
+
+        }
+      }
+    );
   }
 }

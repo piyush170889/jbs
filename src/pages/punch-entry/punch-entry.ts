@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 import { DatabaseProvider } from '../../providers/database/database';
 import { Geolocation } from '@ionic-native/geolocation';
 import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
 import { Diagnostic } from '@ionic-native/diagnostic';
+import { ConstantsProvider } from '../../providers/constants/constants';
+import { RestserviceProvider } from '../../providers/restservice/restservice';
 
 declare var google: any;
 
@@ -28,10 +30,13 @@ export class PunchEntryPage {
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
+    private restService: RestserviceProvider,
     private databaseProvider: DatabaseProvider,
     private commonUtility: CommonUtilityProvider,
     private geolocation: Geolocation,
-    private diagnostic: Diagnostic) {
+    private diagnostic: Diagnostic,
+    private view: ViewController
+  ) {
 
   }
 
@@ -74,10 +79,31 @@ export class PunchEntryPage {
                   latitude: userLat,
                   longitude: userLong,
                   visitPurpose: this.visitPurpose,
-                  geofencingDtlsId: this.selectedLocationDetails.geofencingDtlsId
+                  siteDtls: {
+                    geofencingDtlsId: this.selectedLocationDetails.geofencingDtlsId,
+                    geofenceName: this.selectedLocationDetails.geofenceName
+                  }
                 }
 
                 console.log('punchEntryRequest = ' + JSON.stringify(punchEntryRequest));
+
+                let punchSiteEntryApiEndpoint = ConstantsProvider.API_BASE_URL + ConstantsProvider.API_ENDPOINT_USERS
+                  + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_ADMIN_USERS
+                  + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_PUNCH_SITE_ENTRY;
+
+                this.restService.postDetails(punchSiteEntryApiEndpoint, punchEntryRequest)
+                  .subscribe(
+                    (response) => {
+                      console.log('Punch Entry Response = ' + JSON.stringify(response.response));
+
+                      let punchEntryModalData = {
+                        isAdded: true,
+                        punchEntryData: response.response
+                      }
+
+                      this.view.dismiss(punchEntryModalData);
+                    }
+                  )
               } else {
                 this.commonUtility.presentToast('Please be under atleast 1 KM distance of the location that you are Punching the entry for', 8000);
               }
@@ -97,46 +123,54 @@ export class PunchEntryPage {
     }
   }
 
-  // updateLocationFromDb() {
-  //   this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_LOCATIONS_DATA)
-  //     .subscribe(
-  //       (res) => {
-  //         if (res && res != undefined) {
-
-  //           if (res.rows.length > 0) {
-
-  //             console.log('Locations Data = ' + res.rows.item(0).data);
-
-  //             this.locationsList = res.rows.item(0).data;
-  //           }
-  //         }
-  //       }
-  //     );
-  // }
-
   updateLocationFromDb() {
 
-    this.locationsList.push({
-      geofencingDtlsId: 1,
-      geofenceName: "Aaradhya Enterprises",
-      cardCode: "C0004",
-      geofenceAddr: "1, Mahadev Nagar, Dhayari, Pune, Maharashtra 411041, India",
-      latitude: 18.4417531,
-      longitude: 73.8145203
-    }, {
-        geofencingDtlsId: 2,
-        geofenceName: "A S Enterprises",
-        cardCode: "",
-        geofenceAddr: "1, Mahadev Nagar, Dhayari, Pune, Maharashtra 411041, India",
-        latitude: 18.4417531,
-        longitude: 73.8145203
-      })
+    this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_LOCATIONS_DATA)
+      .subscribe(
+        (res) => {
+          if (res && res != undefined) {
+
+            if (res.rows.length > 0) {
+
+              console.log('Locations Data = ' + res.rows.item(0).data);
+
+              this.locationsList = JSON.parse(res.rows.item(0).data);
+            }
+          }
+        }
+      );
   }
+
+  // updateLocationFromDb() {
+
+  //   this.locationsList.push({
+  //     geofencingDtlsId: 1,
+  //     geofenceName: "Aaradhya Enterprises",
+  //     cardCode: "C0004",
+  //     geofenceAddr: "1, Mahadev Nagar, Dhayari, Pune, Maharashtra 411041, India",
+  //     latitude: 18.4417531,
+  //     longitude: 73.8145203
+  //   }, {
+  //       geofencingDtlsId: 2,
+  //       geofenceName: "A S Enterprises",
+  //       cardCode: "",
+  //       geofenceAddr: "1, Mahadev Nagar, Dhayari, Pune, Maharashtra 411041, India",
+  //       latitude: 18.4417531,
+  //       longitude: 73.8145203
+  //     })
+  // }
 
 
   getCurrentLatLong() {
 
     return this.geolocation.getCurrentPosition();
+  }
+
+  dismissModal() {
+    const modalData = {
+      isAdded: false
+    };
+    this.view.dismiss(modalData);
   }
 
 }
