@@ -6,7 +6,6 @@
 -->
 <ion-header>
 
-
   <ion-navbar color="navbar" text-center>
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
@@ -16,7 +15,8 @@
 
   <ion-row style="background-color: #2F3C51 !important; color: #FFCB08 !important">
     <ion-col col-10 text-center>
-      Last Synced: {{ tillDate == null || tillDate == '' ? 'Not Available' : momentjs(tillDate).format('DD MMM YY hh:mm a')}}
+      Last Synced: {{ tillDate == null || tillDate == '' ? 'Not Available' : momentjs(tillDate).format('DD MMM YY hh:mm
+      a')}}
     </ion-col>
     <ion-col col-2 text-center>
       <ion-icon ios="ios-refresh" (click)="syncLocationData()" md="md-refresh" *ngIf="!isDataSynching"></ion-icon>
@@ -49,31 +49,20 @@
   </div>
 
   <!-- Visit History -->
-  <ion-card *ngFor="let location of locationsList">
-
-    <ion-card-header>
-      <ion-row>
-        <ion-col col-12>
-          <p style="color: #FFCB08 !important"><strong>{{ location.geofenceName }}</strong></p>
-        </ion-col>
-      </ion-row>
-    </ion-card-header>
-
-    <ion-card-content>
-
-      <ion-row>
-        <ion-col col-12>
-          {{ location.geofenceAddr}}
-        </ion-col>
-      </ion-row>
-
-      <ion-row>
-        <ion-col col-12 text-center (click)="updateLocation(location)">
-          <!-- Advanced: explicity set the icon for each platform -->
-          <ion-icon ios="ios-create" md="md-create" color="primary"></ion-icon>
-        </ion-col>
-      </ion-row>
-    </ion-card-content>
-  </ion-card>
+  <div class="locations" *ngFor="let location of locationsList">
+    <ion-row>
+      <ion-col col-10 (click)="viewLocationDetails(location)">
+        <p style="color: #FFCB08 !important"><strong>{{ location.geofenceName }}</strong></p>
+      </ion-col>
+      <ion-col col-2 text-center (click)="updateLocation(location)">
+        <ion-icon ios="ios-create" md="md-create" color="primary"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12 style="color:#ffffff">
+        {{ location.geofenceAddr}}
+      </ion-col>
+    </ion-row>
+  </div>
 
 </ion-content>

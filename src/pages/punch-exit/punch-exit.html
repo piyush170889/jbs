@@ -34,7 +34,8 @@
       </ion-col>
       <ion-col col-8>
         <!-- {{ momentjs(visitHistory.entryDt).format('DD MMM YY') }} {{ momentjs(visitHistory.entryTm).format('hh:mm a') }} -->
-        {{ visitHistory.entryDt }} {{ visitHistory.entryTm }}
+        {{ momentjs(momentjs(visitHistory.entryDt,'DDMMYY')).format('DD MMM YY') }} {{
+          momentjs(momentjs(visitHistory.entryTm, 'HHmmss')).format('hh:mm A') }}
       </ion-col>
     </ion-row>
 

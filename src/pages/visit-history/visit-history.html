@@ -80,8 +80,9 @@
           Entry
         </ion-col>
         <ion-col col-8>
-          <!-- {{ momentjs(visitHistory.entryDt).format('DD MMM YY') }} {{ momentjs(visitHistory.entryTm).format('hh:mm a') }} -->
-          {{ visitHistory.entryDt }} {{ visitHistory.entryTm }}
+          {{ momentjs(momentjs(visitHistory.entryDt,'DDMMYY')).format('DD MMM YY') }} {{
+          momentjs(momentjs(visitHistory.entryTm, 'HHmmss')).format('hh:mm A') }}
+          <!-- {{ visitHistory.entryDt }} {{ visitHistory.entryTm }} -->
         </ion-col>
       </ion-row>
 
@@ -108,8 +109,12 @@
             Exit
           </ion-col>
           <ion-col col-8>
-            {{ visitHistory.exitDt == null || visitHistory.exitDt == '' ? 'Not Punched' : visitHistory.exitDt }}
-            {{ visitHistory.exitTs == null || visitHistory.exitTs == '' ? '' : visitHistory.exitTs }}
+            <!-- {{ visitHistory.exitDt == null || visitHistory.exitDt == '' ? 'Not Punched' : visitHistory.exitDt }}
+            {{ visitHistory.exitTm == null || visitHistory.exitTm == '' ? '' : visitHistory.exitTm }} -->
+            {{ visitHistory.exitDt == null || visitHistory.exitDt == '' ? 'Not Punched' :
+            momentjs(momentjs(visitHistory.exitDt, 'DDMMYY')).format("DD MMM YY") }}
+            {{ visitHistory.exitTm == null || visitHistory.exitTm == '' ? '' : momentjs(momentjs(visitHistory.exitTm,
+            'HHmmss')).format("hh:mm A") }}
           </ion-col>
         </ion-row>
 

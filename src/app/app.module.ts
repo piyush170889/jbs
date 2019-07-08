@@ -61,6 +61,7 @@ import { TestPage } from '../pages/test/test';
 import { LocationsPage } from '../pages/locations/locations';
 import { SignaturePadModule } from 'angular2-signaturepad';
 import { SignaturepadPage } from '../pages/signaturepad/signaturepad';
+import { LocationsDetailsPage } from '../pages/locations-details/locations-details';
 // import { Storage } from '@ionic/storage';
 
 
@@ -103,7 +104,8 @@ import { SignaturepadPage } from '../pages/signaturepad/signaturepad';
     PlaceaddressPage,
     TestPage,
     LocationsPage,
-    SignaturepadPage
+    SignaturepadPage,
+    LocationsDetailsPage
   ],
   imports: [
     BrowserModule,
@@ -150,7 +152,8 @@ import { SignaturepadPage } from '../pages/signaturepad/signaturepad';
     PlaceaddressPage,
     TestPage,
     LocationsPage,
-    SignaturepadPage
+    SignaturepadPage,
+    LocationsDetailsPage
   ],
   providers: [
     StatusBar,

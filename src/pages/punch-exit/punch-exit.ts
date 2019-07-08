@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
+import * as moment from 'moment-timezone';
 
 /**
  * Generated class for the PunchExitPage page.
@@ -21,6 +22,7 @@ export class PunchExitPage {
     siteDtls: {}
   };
   isPendingRequest: boolean = false;
+  momentjs: any = moment;
 
   constructor(
     public navCtrl: NavController,
@@ -59,7 +61,7 @@ export class PunchExitPage {
       this.commonUtility.presentErrorToast('Please fill in some remarks for your visit');
     } else {
       this.visitHistory.remarks = this.remarks;
-      
+
       let punchExitModalData = {
         isAdded: true,
         punchExitData: this.visitHistory

@@ -164,8 +164,8 @@ export class VisitHistoryPage {
 
         let searchValLowerCase = searchVal.toLowerCase();
 
-        if (visitDetailsObj.locationName
-          && visitDetailsObj.locationName.toLowerCase().indexOf(searchValLowerCase) > -1)
+        if (visitDetailsObj.siteDtls.geofenceName
+          && visitDetailsObj.siteDtls.geofenceName.toLowerCase().indexOf(searchValLowerCase) > -1)
           return true;
         else
           return false;

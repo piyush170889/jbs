@@ -9,6 +9,7 @@ import { VisitAddSitePage } from '../visit-add-site/visit-add-site';
 import { Network } from '@ionic-native/network';
 import { SQLiteObject } from '@ionic-native/sqlite';
 import * as moment from 'moment-timezone';
+import { LocationsDetailsPage } from '../locations-details/locations-details';
 
 
 /**
@@ -287,4 +288,14 @@ export class LocationsPage {
     this.updateLocationFromDb();
     this.tillDate = tillDateUpdated;
   }
+
+  viewLocationDetails(location: any) {
+
+    console.log('viewLocationDetails LocationsPage');
+
+    this.navCtrl.push(LocationsDetailsPage, {
+      location: location
+    });
+  }
+
 }

@@ -228,3 +228,8 @@ ion-card-header {
 .pj-paid-inv {
     color: color($colors, secondary, base) !important;
 }
+
+.locations {
+    padding: 1rem;
+    border-bottom: 1px solid color($colors, light, base) !important;
+}

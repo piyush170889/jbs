@@ -39,7 +39,7 @@ export class LoginPage {
         private databaseProvider: DatabaseProvider,
         private locationTracker: LocationTrackerProvider
     ) {
-        this.locationTracker.stopTracking();
+        // this.locationTracker.stopTracking();
 
         this.commonUtility.clearStorage();
 
