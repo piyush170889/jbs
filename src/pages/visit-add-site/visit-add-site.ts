@@ -61,12 +61,20 @@ export class VisitAddSitePage {
             parsedcustomersList.forEach(
               (parsedCustomer: any) => {
 
-                this.customersList.push({
-                  cardCode: parsedCustomer.customerDetails.cardCode,
-                  cardName: parsedCustomer.customerDetails.cardName
-                })
+                // console.log('Customer Details = ' + JSON.stringify(parsedCustomer.customerDetails));
+                if (parsedCustomer.customerDetails.cardCode != null
+                  && parsedCustomer.customerDetails.cardCode != ''
+                  && parsedCustomer.customerDetails.cardName != null
+                  && parsedCustomer.customerDetails.cardName != '') {
+                  this.customersList.push({
+                    cardCode: parsedCustomer.customerDetails.cardCode,
+                    cardName: parsedCustomer.customerDetails.cardName
+                  })
+                }
               }
-            )
+            );
+
+            // console.log('customersList = ' + JSON.stringify(this.customersList))
           }
         }
       );
