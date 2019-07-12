@@ -143,8 +143,14 @@
           <td style="border:1px solid #000;">
             {{momentjs(ledgerInvoice.invoiceDate).format('DD MMM YY')}}
           </td>
-          <td style="border:1px solid #000;">
+          <td style="border:1px solid #000;" *ngIf="ledgerInvoice.type == 'OB'">
             {{ ledgerInvoice.transId }}
+          </td>
+          <td style="border:1px solid #000;" *ngIf="ledgerInvoice.type == 'RC'">
+            {{ ledgerInvoice.originNo }}
+          </td>
+          <td style="border:1px solid #000;" *ngIf="ledgerInvoice.type != 'RC' && ledgerInvoice.type != 'OB'">
+            {{ ledgerInvoice.invoiceNo }}
           </td>
           <td style="border:1px solid #000;">
             {{ledgerInvoice.ref2}}

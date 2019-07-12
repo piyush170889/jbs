@@ -56,7 +56,7 @@ export class PunchEntryPage {
 
     console.log('punchEntry PunchEntryPage');
 
-    console.log('selectedLocationDetails = ' + JSON.stringify(this.selectedLocationDetails) + ', Visit Purpose = ' + this.visitPurpose);
+    console.log('selectedLocationDetails = ' + JSON.stringify(this.selectedLocationDetails) + ', \n Visit Purpose = ' + this.visitPurpose);
 
     if (this.selectedLocationDetails && this.visitPurpose
       && this.selectedLocationDetails != undefined && this.visitPurpose != undefined) {
@@ -68,12 +68,13 @@ export class PunchEntryPage {
 
               let userLat = resp.coords.latitude;
               let userLong = resp.coords.longitude;
-              console.log('this.currentLatitude = ' + userLat + ', currentLongitude = ' + userLong);
+              console.log('currentLatitude = ' + userLat + ', currentLongitude = ' + userLong);
 
               let currentDistanceFromPunchingLocation = this.commonUtility.distance(this.selectedLocationDetails.latitude,
                 this.selectedLocationDetails.longitude, userLat, userLong, "K");
 
-              if (currentDistanceFromPunchingLocation <= 1) {
+              console.log('currentDistanceFromPunchingLocation = ' + currentDistanceFromPunchingLocation);
+              if (currentDistanceFromPunchingLocation <= 0.5) {
 
                 let punchEntryRequest = {
                   latitude: userLat,
@@ -105,7 +106,7 @@ export class PunchEntryPage {
                     }
                   )
               } else {
-                this.commonUtility.presentToast('Please be under atleast 1 KM distance of the location that you are Punching the entry for', 8000);
+                this.commonUtility.presentToast('Please be under atleast 100 M distance of the location that you are Punching the entry for', 8000);
               }
             }).catch((error) => {
               this.commonUtility.presentErrorToast(JSON.stringify(error));

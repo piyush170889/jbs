@@ -15,6 +15,7 @@ import { RestserviceProvider } from '../restservice/restservice';
 @Injectable()
 export class DatabaseProvider {
 
+
   constructor(public http: HttpClient,
     private sqlite: SQLite,
     private network: Network,
@@ -66,6 +67,20 @@ export class DatabaseProvider {
       this.initializeSqlLiteDb().then((db: SQLiteObject) => {
         return db.executeSql('SELECT data FROM metadata WHERE configname=?',
           [ConstantsProvider.CONFIG_NM_CUST_DATA])
+      })
+        .catch(e => {
+          console.log(JSON.stringify(e))
+        })
+    );
+  }
+
+
+  deleteItem(configName: string) {
+
+    return Observable.fromPromise(
+      this.initializeSqlLiteDb().then((db: SQLiteObject) => {
+        return db.executeSql('delete FROM metadata WHERE configname=?',
+          [configName])
       })
         .catch(e => {
           console.log(JSON.stringify(e))

@@ -15,6 +15,26 @@ declare var cordova: any;
 @Injectable()
 export class CommonUtilityProvider {
 
+    replaceCustomerInvoice(customer: any, invoice: any): any {
+
+        let customerInvoiceList: any[] = customer.customerInvoicesList;
+
+        customerInvoiceList.forEach(
+            (customerInvoice) => {
+                if (customerInvoice.invoiceNo == invoice.invoiceNo) {
+                    customerInvoiceList.splice(customerInvoiceList.indexOf(customerInvoice), 1);
+                    customerInvoiceList.push(invoice);
+                }
+            }
+        );
+
+        customer.customerInvoicesList = customerInvoiceList
+        
+        this.saveCustomerRecord(customer);
+
+        return true;
+    }
+
     momentjs: any = moment;
     isNetworkAvailableFlag: boolean = true;
     imgPath: string = '';
@@ -484,5 +504,38 @@ export class CommonUtilityProvider {
 
             return dist;
         }
+    }
+
+    saveCustomerRecord(customer: any) {
+
+        this.databaseProvider.getCustomerData()
+            .subscribe(
+                (res) => {
+                    let customersList: any[] = [];
+
+                    if (res.rows.length > 0) {
+                        console.log('CustData = ' + res.rows.item(0).data);
+                        customersList = JSON.parse(res.rows.item(0).data);
+
+                        customersList.forEach(
+                            (customerElement: any) => {
+                                if (customerElement.customerDetails.cardCode == customer.customerDetails.cardCode) {
+                                    customersList.splice(customersList.indexOf(customerElement), 1);
+                                    customersList.push(customer);
+                                }
+                            }
+                        );
+
+                        this.databaseProvider.setItem(ConstantsProvider.CONFIG_NM_CUST_DATA, JSON.stringify(customersList));
+                    }
+                }
+            );
+    }
+
+    isNetworkPresent() {
+        if (this.network.type == "unknown" || this.network.type == "none" || this.network.type == undefined)
+            return false;
+        else
+            return true;
     }
 }

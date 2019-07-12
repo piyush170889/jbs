@@ -6,6 +6,8 @@ import * as moment from 'moment-timezone';
 import { ConstantsProvider } from '../../providers/constants/constants';
 import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
 import { InvoiceDetailsPage } from '../invoice-details/invoice-details';
+import { Network } from '@ionic-native/network';
+import { DatabaseProvider } from '../../providers/database/database';
 
 
 /**
@@ -46,7 +48,9 @@ export class SignaturepadPage {
     private navCtrl: NavController,
     private restService: RestserviceProvider,
     private navParams: NavParams,
-    private commonUtility: CommonUtilityProvider) {
+    private commonUtility: CommonUtilityProvider,
+    private databaseProvider: DatabaseProvider
+  ) {
 
   }
 
@@ -74,47 +78,81 @@ export class SignaturepadPage {
 
   savePad() {
 
-    console.log('Signature to Save = ' + this.signaturePad.toDataURL());
-
-    let invoiceAcknowledgementApiEndpoint: string = ConstantsProvider.API_BASE_URL
-      + ConstantsProvider.API_ENDPOINT_CUST_DTLS + ConstantsProvider.URL_SEPARATOR + this.invoiceNo
-      + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_INVOICE_ACKNOWLEDGEMENT;
-
     let signatureToSave: any = this.signaturePad.toDataURL();
+    console.log('Signature to Save = ' + signatureToSave);
 
-    let data: any = {
-      signature: signatureToSave
+    if (!this.commonUtility.isNetworkPresent()) {
+
+      let invoiceAcknowledgementOfflineData: any = {
+        invoiceNo: this.invoice.invoiceNo,
+        signature: signatureToSave,
+        invoice: this.invoice
+      }
+
+      this.databaseProvider.getItem(ConstantsProvider.CONFIG_NM_ACK_INV_OFFLINE)
+        .then(
+          (res) => {
+
+            let acknowledgementInvList: any[] = [];
+
+            if (res.rows.length > 0)
+              acknowledgementInvList = JSON.parse(res.rows.item(0).data);
+
+            acknowledgementInvList.push(invoiceAcknowledgementOfflineData);
+
+            this.databaseProvider.setItem(ConstantsProvider.CONFIG_NM_ACK_INV_OFFLINE, JSON.stringify(acknowledgementInvList));
+
+            this.updateInvoiceDetailsAndReturn(signatureToSave);
+          }
+        )
+        .catch((e) => {
+          console.log('Error = ' + JSON.stringify(e));
+        });
+    } else {
+      let invoiceAcknowledgementApiEndpoint: string = ConstantsProvider.API_BASE_URL
+        + ConstantsProvider.API_ENDPOINT_CUST_DTLS + ConstantsProvider.URL_SEPARATOR + this.invoiceNo
+        + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_INVOICE_ACKNOWLEDGEMENT;
+
+
+      let data: any = {
+        signature: signatureToSave
+      }
+
+      console.log('invoiceAcknowledgementApiEndpoint = ' + invoiceAcknowledgementApiEndpoint
+        + ', Data = ' + JSON.stringify(data));
+
+      this.restService.postDetails(invoiceAcknowledgementApiEndpoint, data)
+        .subscribe(
+          (response) => {
+
+            console.log('Response = ' + JSON.stringify(response));
+
+            this.updateInvoiceDetailsAndReturn(signatureToSave);
+          },
+          (err) => {
+            console.log('Error = ' + JSON.stringify(err));
+            this.commonUtility.presentErrorToast('Could Not Save Acknowledgement. Please try again');
+          }
+        )
+      // this.signature = this.signaturePad.toDataURL();
     }
+  }
 
-    console.log('invoiceAcknowledgementApiEndpoint = ' + invoiceAcknowledgementApiEndpoint
-      + ', Data = ' + JSON.stringify(data));
+  updateInvoiceDetailsAndReturn(signatureToSave: any) {
+    this.invoice.signature = signatureToSave;
 
-    this.restService.postDetails(invoiceAcknowledgementApiEndpoint, data)
-      .subscribe(
-        (response) => {
+    this.commonUtility.replaceCustomerInvoice(this.customer, this.invoice);
 
-          console.log('Response = ' + JSON.stringify(response));
+    this.signaturePad.clear();
 
-          this.invoice.signature = signatureToSave;
+    this.navCtrl.pop();
+    this.navCtrl.pop();
 
-          this.signaturePad.clear();
-
-          this.navCtrl.pop();
-          this.navCtrl.pop();
-
-          this.navCtrl.push(InvoiceDetailsPage, {
-            customer: this.customer,
-            fromDate: this.fromDate,
-            invoice: this.invoice
-          });
-        },
-        (err) => {
-          console.log('Error = ' + JSON.stringify(err));
-          this.commonUtility.presentErrorToast('Could Not Save Acknowledgement. Please try again');
-        }
-      )
-    // this.signature = this.signaturePad.toDataURL();
-
+    this.navCtrl.push(InvoiceDetailsPage, {
+      customer: this.customer,
+      fromDate: this.fromDate,
+      invoice: this.invoice
+    });
   }
 
   clearPad() {

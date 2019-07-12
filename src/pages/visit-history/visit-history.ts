@@ -11,6 +11,9 @@ import { DatabaseProvider } from '../../providers/database/database';
 import { GeoFence } from '../visit-add-site/domain-geofence';
 import { PunchEntryPage } from '../punch-entry/punch-entry';
 import { PunchExitPage } from '../punch-exit/punch-exit';
+import { Diagnostic } from '@ionic-native/diagnostic';
+import { GeocoderProvider } from '../../providers/geocoder/geocoder';
+import { Geolocation } from '@ionic-native/geolocation';
 
 
 /**
@@ -44,7 +47,11 @@ export class VisitHistoryPage {
     private network: Network,
     private restService: RestserviceProvider,
     private databaseProvider: DatabaseProvider,
-    private modal: ModalController) {
+    private modal: ModalController,
+    private diagnostic: Diagnostic,
+    private geolocation: Geolocation,
+    private geoCoderProvider: GeocoderProvider
+  ) {
 
     this.isDataSynching = false;
 
@@ -396,52 +403,94 @@ export class VisitHistoryPage {
 
   createPunchExitModal(visitHistory: any, isPendingRequest: boolean) {
 
-    // Go To Punch Exit Page
-    let punchExitModal: Modal = this.modal.create(PunchExitPage, {
-        visitHistory: visitHistory,
-        isPendingRequest: isPendingRequest
-    });
+    this.diagnostic.isLocationEnabled().then((available) => {
+      if (available) {
+        // Go To Punch Exit Page
+        let punchExitModal: Modal = this.modal.create(PunchExitPage, {
+          visitHistory: visitHistory,
+          isPendingRequest: isPendingRequest
+        });
 
-    punchExitModal.present();
+        punchExitModal.present();
 
-    punchExitModal.onDidDismiss(
-      (punchExitModalData) => {
-        console.log('punchExitModalData = ' + JSON.stringify(punchExitModalData));
+        punchExitModal.onDidDismiss(
+          (punchExitModalData) => {
+            console.log('punchExitModalData = ' + JSON.stringify(punchExitModalData));
 
-        if (punchExitModalData.isAdded) {
+            if (punchExitModalData.isAdded) {
 
-          let punchExitApiEndpoint = ConstantsProvider.API_BASE_URL + ConstantsProvider.API_ENDPOINT_USERS
-            + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_ADMIN_USERS
-            + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_PUNCH_SITE_EXIT;
+              let punchExitData: any = punchExitModalData.punchExitData;
 
-          let punchExitData: any = punchExitModalData.punchExitData;
+              console.log('punchExitData = ' + JSON.stringify(punchExitData));
 
-          console.log('punchExitApiEndpoint = ' + punchExitApiEndpoint
-            + ', punchExitData = ' + JSON.stringify(punchExitData));
+              this.getCurrentLatLong()
+                .then((resp) => {
 
-          let punchExitApiData = {
-            siteVisitHistoryId: punchExitData.siteVisitHistoryId,
-            remarks: punchExitData.remarks
+                  let userLat = resp.coords.latitude;
+                  let userLong = resp.coords.longitude;
+                  console.log('exit latitude = ' + userLat + ', exit longitude = ' + userLong);
+
+                  let exitLocation: string = 'NA';
+                  this.geoCoderProvider.reverseGeocode(userLat, userLong)
+                    .subscribe(
+                      (response: any) => {
+                        console.log('Response = ' + JSON.stringify(response));
+                        exitLocation = response;
+
+                        this.punchExitApiCall(punchExitData, visitHistory, userLat, userLong, exitLocation);
+                      },
+                      (err: any) => {
+                        console.log('Error = ' + JSON.stringify(err));
+                        this.punchExitApiCall(punchExitData, visitHistory, userLat, userLong, exitLocation);
+                      }
+                    );
+                })
+                .catch(e => {
+                  console.log('Error = ' + JSON.stringify(e));
+                  this.commonUtility.presentErrorToast('Cannot Capture Location At The Moment');
+                });
+            }
           }
-
-          this.restService.putDetails(punchExitApiEndpoint, punchExitApiData)
-            .subscribe(
-              (response) => {
-                console.log('Response = ' + JSON.stringify(response.response));
-
-                let index = this.visitHistoryList.indexOf(visitHistory);
-                if (index > -1) {
-                  this.visitHistoryList[index] = response.response;
-
-                  this.databaseProvider.setItem(ConstantsProvider.CONFIG_NM_VISITS_DATA, JSON.stringify(this.visitHistoryList));
-
-                  this.commonUtility.presentToast('Exit Punched Successfully', 5000);
-                }
-              }
-            );
-
-        }
+        );
+      } else {
+        this.diagnostic.switchToLocationSettings();
       }
-    );
+    });
+  }
+
+  getCurrentLatLong() {
+
+    return this.geolocation.getCurrentPosition();
+  }
+
+  punchExitApiCall(punchExitData, visitHistory, userLat, userLong, exitLocation) {
+
+    let punchExitApiEndpoint = ConstantsProvider.API_BASE_URL + ConstantsProvider.API_ENDPOINT_USERS
+      + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_ADMIN_USERS
+      + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_PUNCH_SITE_EXIT;
+
+    let punchExitApiData = {
+      siteVisitHistoryId: punchExitData.siteVisitHistoryId,
+      remarks: punchExitData.remarks,
+      exitLatitude: userLat,
+      exitLongitude: userLong,
+      exitLocation: exitLocation
+    }
+
+    this.restService.putDetails(punchExitApiEndpoint, punchExitApiData)
+      .subscribe(
+        (response) => {
+          console.log('Response = ' + JSON.stringify(response.response));
+
+          let index = this.visitHistoryList.indexOf(visitHistory);
+          if (index > -1) {
+            this.visitHistoryList[index] = response.response;
+
+            this.databaseProvider.setItem(ConstantsProvider.CONFIG_NM_VISITS_DATA, JSON.stringify(this.visitHistoryList));
+
+            this.commonUtility.presentToast('Exit Punched Successfully', 5000);
+          }
+        }
+      );
   }
 }

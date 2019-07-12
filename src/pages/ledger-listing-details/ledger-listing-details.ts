@@ -94,8 +94,11 @@ export class LedgerListingDetailsPage {
       this.originalLedgerInvoiceList.forEach(
         (invoice: any) => {
 
-          console.log('invoiceDate = ' + invoice.invoiceDate + ', fromDate = ' + this.fromDate + ', tillDate = ' + this.tillDate);
-          if (invoice.invoiceDate >= this.fromDate && invoice.invoiceDate <= this.tillDate) {
+          let formattedInvoiceDate = this.momentjs(invoice.invoiceDate).format('YYYY-MM-DD');
+          console.log('invoiceDate = ' + formattedInvoiceDate
+            + ', fromDate = ' + this.fromDate + ', tillDate = ' + this.tillDate);
+
+          if (formattedInvoiceDate >= this.fromDate && formattedInvoiceDate <= this.tillDate) {
             console.log("Pass: " + JSON.stringify('Invoice no = ' + invoice.invoiceNo));
             sortedList.push(invoice);
             this.totalDebitBalance = this.totalDebitBalance + Number.parseFloat(invoice.debit);
@@ -132,22 +135,35 @@ export class LedgerListingDetailsPage {
 
     let body: any[] = [];
 
-    body.push(['Post. Date', 'Trans.', 'Ref2', 'Source', 'Debit', 'Credit']);
+    body.push(['Post. Date', 'Trans.', 'Source', 'Debit', 'Credit']);
+    // body.push(['Post. Date', 'Trans.', 'Ref2', 'Source', 'Debit', 'Credit']);
 
     this.ledgerInvoiceList.forEach(
       (ledgerInvoice) => {
 
+        let transId = ledgerInvoice.invoiceNo;
+
+        if (ledgerInvoice.type == 'RC')
+          transId = ledgerInvoice.originNo;
+        else if (ledgerInvoice.type == 'OB')
+          transId = ledgerInvoice.transId;
+
         body.push([
-          this.momentjs(ledgerInvoice.invoiceDate).format('DD MMM YYYY'),
-          ledgerInvoice.transId, ledgerInvoice.ref2, ledgerInvoice.type,
+          this.momentjs(
+            ledgerInvoice.invoiceDate).format('DD MMM YYYY'),
+          transId,
+          // ledgerInvoice.ref2,
+          ledgerInvoice.type,
           ledgerInvoice.debit == 0 ? '' : ledgerInvoice.debit,
           ledgerInvoice.credit == 0 ? '' : ledgerInvoice.credit]);
         // ledgerInvoice.cumulativeBalance, ledgerInvoice.grossTotal]);
       }
     );
 
-    body.push(['', '', '', { text: 'Total', bold: true }, { text: this.totalDebitBalance.toFixed(2), bold: true }, { text: this.totalCreditBalance.toFixed(2), bold: true }]);
-    body.push(['', '', '', { text: 'Total Due Balance', bold: true }, { text: (this.totalDebitBalance - this.totalCreditBalance).toFixed(2), colSpan: 2, bold: true }]);
+    // body.push(['', '', '', { text: 'Total', bold: true }, { text: this.totalDebitBalance.toFixed(2), bold: true }, { text: this.totalCreditBalance.toFixed(2), bold: true }]);
+    // body.push(['', '', '', { text: 'Total Due Balance', bold: true }, { text: (this.totalDebitBalance - this.totalCreditBalance).toFixed(2), colSpan: 2, bold: true }]);
+    body.push(['', '', { text: 'Total', bold: true }, { text: this.totalDebitBalance.toFixed(2), bold: true }, { text: this.totalCreditBalance.toFixed(2), bold: true }]);
+    body.push(['', '', { text: 'Total Due Balance', bold: true }, { text: (this.totalDebitBalance - this.totalCreditBalance).toFixed(2), colSpan: 2, bold: true }]);
 
     let docDefinition = this.commonUtility.getDocDefination('Ledger Report',
       this.momentjs(this.fromDate).format('DD MMM YYYY') + ' - ' + this.momentjs(this.tillDate).format('DD MMM YYYY'),

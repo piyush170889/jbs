@@ -451,62 +451,50 @@ export class CustomerMgmtPage {
 
   syncCustomerData() {
 
-    let customersDetailsApiEndpoint = ConstantsProvider.API_BASE_URL
-      + ConstantsProvider.API_ENDPOINT_CUST_DTLS + ConstantsProvider.URL_SEPARATOR
-      + ConstantsProvider.API_ENDPOINT_SYNC;
+    this.databaseProvider.getItem(ConstantsProvider.CONFIG_NM_ACK_INV_OFFLINE)
+      .then(
+        (res) => {
+          console.log(' Offline Ackn Resp = ' + JSON.stringify(res));
+          
+          if (res.rows.length > 0) {
+            let invoiceAckOffData: any[] = JSON.parse(res.rows.item(0).data);
 
-    this.isDataSynching = true;
+            let invoiceAckOffApiEndpoint: string = ConstantsProvider.API_BASE_URL
+              + ConstantsProvider.API_ENDPOINT_CUST_DTLS + ConstantsProvider.URL_SEPARATOR
+              + ConstantsProvider.API_ENDPOINT_INVOICE_ACKNOWLEDGEMENT;
 
-    if (this.network.type != "unknown" && this.network.type != "none" && this.network.type != undefined) {
+            this.restService.putDetails(invoiceAckOffApiEndpoint, invoiceAckOffData)
+              .subscribe(
+                (res) => {
+                  console.log('Sync Response = ' + JSON.stringify(res));
 
-      this.restService.getDetailsWithoutLoader(customersDetailsApiEndpoint)
-        .subscribe(
-          (response) => {
-            this.isDataSynching = false;
+                  this.databaseProvider.deleteItem(ConstantsProvider.CONFIG_NM_ACK_INV_OFFLINE)
+                    .subscribe(
+                      (res) => {
+                        console.log('Deleted Invoice Offline Acknowledgement After Sync');
 
-            console.log('Customers Data = ' + JSON.stringify(response.response));
-            let customersDetailsList: any[] = response.response;
-
-            this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
-
-              db.executeSql('SELECT data from metadata where configname=?',
-                [ConstantsProvider.CONFIG_NM_CUST_DATA])
-                .then(
-                  res => {
-                    if (res.rows.length > 0) {
-                      this.updateCustomerDetailsFromApi(customersDetailsList);
-                    } else {
-                      db.executeSql('INSERT INTO metadata(configname, data) VALUES(?,?)',
-                        [ConstantsProvider.CONFIG_NM_CUST_DATA, ''])
-                        .then(res => {
-                          console.log('Inserted Empty Customer Record');
-                          this.updateCustomerDetailsFromApi(customersDetailsList);
-                        })
-                        .catch(e => {
-                          console.log(JSON.stringify(e))
-                          this.isDataSynching = false;
-                        })
-                    }
-                  }
-                )
-                .catch(e => {
-                  console.log(JSON.stringify(e))
-                  this.isDataSynching = false;
-                })
-            })
-              .catch(e => {
-                console.log(JSON.stringify(e))
-                this.isDataSynching = false;
-              })
-          },
-          (err) => {
-            this.isDataSynching = false;
+                        this.startSynchingCustomerData();
+                      }
+                    );
+                    // .catch(
+                    //   (e) => {
+                    //     console.log('Error = ' + JSON.stringify(e));
+                    //     this.commonUtility.presentErrorToast('Error Synching Customer Data');
+                    //   }
+                    // );
+                }
+              );
+          } else {
+            this.startSynchingCustomerData();
           }
-        );
-    } else {
-      this.commonUtility.presentErrorToast('No Internet Connection');
-      this.isDataSynching = false;
-    }
+        }
+      )
+      .catch(
+        (e) => {
+          console.log('Error = ' + JSON.stringify(e));
+          this.commonUtility.presentErrorToast('Error Synching Customer Data');
+        }
+      );
   }
 
   updateCustomerDetailsFromApi(customersDetailsList: any[]) {
@@ -567,5 +555,65 @@ export class CustomerMgmtPage {
       .catch(e => {
         console.log(JSON.stringify(e))
       })
+  }
+
+  startSynchingCustomerData() {
+
+    let customersDetailsApiEndpoint = ConstantsProvider.API_BASE_URL
+      + ConstantsProvider.API_ENDPOINT_CUST_DTLS + ConstantsProvider.URL_SEPARATOR
+      + ConstantsProvider.API_ENDPOINT_SYNC;
+
+    this.isDataSynching = true;
+
+    if (this.network.type != "unknown" && this.network.type != "none" && this.network.type != undefined) {
+
+      this.restService.getDetailsWithoutLoader(customersDetailsApiEndpoint)
+        .subscribe(
+          (response) => {
+            this.isDataSynching = false;
+
+            console.log('Customers Data = ' + JSON.stringify(response.response));
+            let customersDetailsList: any[] = response.response;
+
+            this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
+
+              db.executeSql('SELECT data from metadata where configname=?',
+                [ConstantsProvider.CONFIG_NM_CUST_DATA])
+                .then(
+                  res => {
+                    if (res.rows.length > 0) {
+                      this.updateCustomerDetailsFromApi(customersDetailsList);
+                    } else {
+                      db.executeSql('INSERT INTO metadata(configname, data) VALUES(?,?)',
+                        [ConstantsProvider.CONFIG_NM_CUST_DATA, ''])
+                        .then(res => {
+                          console.log('Inserted Empty Customer Record');
+                          this.updateCustomerDetailsFromApi(customersDetailsList);
+                        })
+                        .catch(e => {
+                          console.log(JSON.stringify(e))
+                          this.isDataSynching = false;
+                        })
+                    }
+                  }
+                )
+                .catch(e => {
+                  console.log(JSON.stringify(e))
+                  this.isDataSynching = false;
+                })
+            })
+              .catch(e => {
+                console.log(JSON.stringify(e))
+                this.isDataSynching = false;
+              })
+          },
+          (err) => {
+            this.isDataSynching = false;
+          }
+        );
+    } else {
+      this.commonUtility.presentErrorToast('No Internet Connection');
+      this.isDataSynching = false;
+    }
   }
 }

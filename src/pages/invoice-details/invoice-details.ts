@@ -10,6 +10,7 @@ import { CustomerDetailsPage } from '../customer-details/customer-details';
 import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
 import * as moment from 'moment-timezone';
 import { SignaturepadPage } from '../signaturepad/signaturepad';
+import { VerifyPinPage } from '../verify-pin/verify-pin';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -394,12 +395,18 @@ export class InvoiceDetailsPage {
 
     console.log('takeAcknowledgement InvoiceDetailsPage');
 
-    this.navCtrl.push(SignaturepadPage, {
+    this.navCtrl.push(VerifyPinPage, {
       invoice: this.invoice,
       customer: this.customer,
       signature: this.signature,
       fromDate: this.fromDate
-    })
+    });
+    // this.navCtrl.push(SignaturepadPage, {
+    //   invoice: this.invoice,
+    //   customer: this.customer,
+    //   signature: this.signature,
+    //   fromDate: this.fromDate
+    // })
   }
 
 }
