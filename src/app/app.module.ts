@@ -63,6 +63,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
 import { SignaturepadPage } from '../pages/signaturepad/signaturepad';
 import { LocationsDetailsPage } from '../pages/locations-details/locations-details';
 import { VerifyPinPage } from '../pages/verify-pin/verify-pin';
+import { GeneratePinReviewPage } from '../pages/generate-pin-review/generate-pin-review';
 // import { Storage } from '@ionic/storage';
 
 
@@ -107,7 +108,8 @@ import { VerifyPinPage } from '../pages/verify-pin/verify-pin';
     LocationsPage,
     SignaturepadPage,
     LocationsDetailsPage,
-    VerifyPinPage
+    VerifyPinPage,
+    GeneratePinReviewPage
   ],
   imports: [
     BrowserModule,
@@ -156,7 +158,8 @@ import { VerifyPinPage } from '../pages/verify-pin/verify-pin';
     LocationsPage,
     SignaturepadPage,
     LocationsDetailsPage,
-    VerifyPinPage
+    VerifyPinPage,
+    GeneratePinReviewPage
   ],
   providers: [
     StatusBar,

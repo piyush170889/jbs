@@ -6,6 +6,7 @@ import { ConstantsProvider } from '../../providers/constants/constants';
 import { SignaturepadPage } from '../signaturepad/signaturepad';
 import { Network } from '@ionic-native/network';
 import { DatabaseProvider } from '../../providers/database/database';
+import { GeneratePinReviewPage } from '../generate-pin-review/generate-pin-review';
 
 /**
  * Generated class for the VerifyPinPage page.
@@ -104,28 +105,32 @@ export class VerifyPinPage {
 
     console.log('generatePin VerifyPinPage');
 
-    if (this.commonUtility.isNetworkAvailable()) {
+    this.navCtrl.push(GeneratePinReviewPage, {
+      customer: this.customer
+    });
 
-      let generatePinApiEndPoint: string = ConstantsProvider.API_BASE_URL + ConstantsProvider.API_ENDPOINT_CUST_DTLS
-        + ConstantsProvider.URL_SEPARATOR + this.customer.customerDetails.cardCode
-        + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_GENERATE_PIN;
+    // if (this.commonUtility.isNetworkAvailable()) {
 
-      this.restService.getDetails(generatePinApiEndPoint)
-        .subscribe(
-          (res) => {
-            console.log('Response = ' + JSON.stringify(res.response));
-            let generatePinRes = res.response;
+    //   let generatePinApiEndPoint: string = ConstantsProvider.API_BASE_URL + ConstantsProvider.API_ENDPOINT_CUST_DTLS
+    //     + ConstantsProvider.URL_SEPARATOR + this.customer.customerDetails.cardCode
+    //     + ConstantsProvider.URL_SEPARATOR + ConstantsProvider.API_ENDPOINT_GENERATE_PIN;
 
-            this.customer.customerDetails.pin = generatePinRes.customersPin;
-            console.log('customerDetails Pin = ' + this.customer.customerDetails.pin +
-              ", generatePinRes customersPin = " + generatePinRes.customersPin);
+    //   this.restService.getDetails(generatePinApiEndPoint)
+    //     .subscribe(
+    //       (res) => {
+    //         console.log('Response = ' + JSON.stringify(res.response));
+    //         let generatePinRes = res.response;
 
-            this.commonUtility.presentToast('PIN Generated Succesfully And Sent to registered mobile No.', 5000);
+    //         this.customer.customerDetails.pin = generatePinRes.customersPin;
+    //         console.log('customerDetails Pin = ' + this.customer.customerDetails.pin +
+    //           ", generatePinRes customersPin = " + generatePinRes.customersPin);
 
-            this.commonUtility.saveCustomerRecord(this.customer);
-          }
-        )
-    }
+    //         this.commonUtility.presentToast('PIN Generated Succesfully And Sent to registered mobile No.', 5000);
+
+    //         this.commonUtility.saveCustomerRecord(this.customer);
+    //       }
+    //     )
+    // }
   }
 
 }
