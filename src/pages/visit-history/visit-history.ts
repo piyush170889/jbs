@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Modal, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Modal, ModalController, PopoverController } from 'ionic-angular';
 import * as moment from 'moment-timezone';
-import { VisitAddSitePage } from '../visit-add-site/visit-add-site';
 import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
+import { VisitAddSitePage } from '../visit-add-site/visit-add-site';
 import { ConstantsProvider } from '../../providers/constants/constants';
 import { SQLiteObject } from '@ionic-native/sqlite';
 import { RestserviceProvider } from '../../providers/restservice/restservice';
@@ -14,6 +14,10 @@ import { PunchExitPage } from '../punch-exit/punch-exit';
 import { Diagnostic } from '@ionic-native/diagnostic';
 import { GeocoderProvider } from '../../providers/geocoder/geocoder';
 import { Geolocation } from '@ionic-native/geolocation';
+import { LoginPage } from '../login/login';
+import { PopoverSortVisitPage } from '../popover-sort-visit/popover-sort-visit';
+import { CustomerSelectionPage } from '../customer-selection/customer-selection';
+import { DownloadDetailsPage } from '../download-details/download-details';
 
 
 /**
@@ -30,14 +34,23 @@ import { Geolocation } from '@ionic-native/geolocation';
 })
 export class VisitHistoryPage {
 
+  sortOrder: number = 0;
   momentjs: any = moment;
   tillDate: string = '';
   isDataSynching: boolean = false;
   visitHistoryList: any[] = [];
   myInput: string = '';
-  orginalVisitList: any[] = [];
+  // orginalVisitList: any[] = [];
   orginalListDuplicate: any[] = [];
   locationsList: GeoFence[] = [];
+  rolesArray: any[] = [];
+  isAdmin: boolean = false;
+  selectedCustomer: any = null;
+  originalVisitHistoryList: any[] = [];
+  fromDate: any = '';
+  toDate: any = '';
+  salesExecutive: any = '';
+  visitHistoryListDuplicate: any[] = [];
 
 
   constructor(
@@ -50,7 +63,8 @@ export class VisitHistoryPage {
     private modal: ModalController,
     private diagnostic: Diagnostic,
     private geolocation: Geolocation,
-    private geoCoderProvider: GeocoderProvider
+    private geoCoderProvider: GeocoderProvider,
+    private popOverController: PopoverController
   ) {
 
     this.isDataSynching = false;
@@ -167,7 +181,7 @@ export class VisitHistoryPage {
     // if the value is an empty string don't filter the items
     if (searchVal && searchVal.trim() != '') {
 
-      this.visitHistoryList = this.orginalVisitList.filter((visitDetailsObj: any) => {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter((visitDetailsObj: any) => {
 
         let searchValLowerCase = searchVal.toLowerCase();
 
@@ -181,7 +195,7 @@ export class VisitHistoryPage {
       console.log('Visits List Length = ' + this.visitHistoryList.length);
     } else {
       this.visitHistoryList = this.orginalListDuplicate;
-      this.orginalVisitList = this.orginalListDuplicate;
+      this.originalVisitHistoryList = this.orginalListDuplicate;
     }
   }
 
@@ -247,54 +261,93 @@ export class VisitHistoryPage {
 
   updateVisitsDataFromDB() {
 
-    // this.putDummyData();
-
     this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_VISITS_DATA)
       .subscribe(
         res => {
           if (res.rows.length > 0) {
+
             console.log('Visit Data = ' + res.rows.item(0).data);
-            this.visitHistoryList = JSON.parse(res.rows.item(0).data);
+            this.originalVisitHistoryList = JSON.parse(res.rows.item(0).data);
+
+            this.listVisitHistoryByLoggedInUser();
           }
 
-          this.orginalVisitList = this.visitHistoryList;
-          this.orginalListDuplicate = this.visitHistoryList;
+          // this.orginalVisitList = this.visitHistoryList;
+          this.orginalListDuplicate = this.originalVisitHistoryList;
         }
         , (e) => {
           console.log(JSON.stringify(e));
         });
   }
 
-  putDummyData() {
+  listVisitHistoryByLoggedInUser() {
 
-    this.visitHistoryList.push({
-      locationName: 'Location 1',
-      entryTime: '09:00 AM',
-      exitTime: '10:00 AM',
-      visitPurpose: 'Payment',
-      remarks: 'Done'
-    }, {
-        locationName: 'Location 2',
-        entryTime: '10:00 AM',
-        exitTime: '11:00 AM',
-        visitPurpose: 'General Visit',
-        remarks: 'Done'
-      }, {
-        locationName: 'Location 3',
-        entryTime: '09:00 AM',
-        exitTime: '',
-        visitPurpose: '',
-        remarks: ''
-      }, {
-        locationName: 'Location 4',
-        entryTime: '09:00 AM',
-        exitTime: null,
-        visitPurpose: null,
-        remarks: null
-      });
+    this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_ROLES)
+      .subscribe(
+        res => {
+          console.log('roles DB Call Response = ' + JSON.stringify(res));
+          if (undefined == res || 'undefined' == res)
+            this.navCtrl.setRoot(LoginPage);
+          else {
+            if (res.rows.length > 0) {
+              let rowData: any = res.rows.item(0).data;
+              this.rolesArray = (null != rowData ? JSON.parse(rowData) : null);
+            } else
+              this.rolesArray = null;
+          }
 
-    this.orginalVisitList = this.visitHistoryList;
-    this.orginalListDuplicate = this.visitHistoryList;
+          console.log('rolesArray = ' + JSON.stringify(this.rolesArray));
+          if (this.rolesArray && null != this.rolesArray) {
+            if (this.rolesArray.indexOf(ConstantsProvider.ROLE_ADMIN) > -1) {
+              console.log('Admin Role Matched');
+              this.isAdmin = true;
+              this.visitHistoryList = [];
+              this.visitHistoryList = this.originalVisitHistoryList;
+              this.visitHistoryListDuplicate = this.visitHistoryList;
+              this.sortVisitHistoryByDate();
+            } else if (this.rolesArray.indexOf(ConstantsProvider.ROLE_SALES) > -1) {
+
+              console.log('Sales Role Matched');
+              this.databaseProvider.getMetaData(ConstantsProvider.CONFIG_NM_USER_DTLS)
+                .subscribe(
+                  (res) => {
+                    let userDetails: any = null;
+
+                    if (res.rows.length > 0) {
+                      let rowData: any = res.rows.item(0).data;
+                      userDetails = null != rowData ? JSON.parse(rowData) : null;
+                    } else {
+                      this.navCtrl.setRoot(LoginPage);
+                    }
+
+                    if (userDetails && null != userDetails) {
+                      let loggedInUserId: string = userDetails.userDtl.userDtlsId;
+
+                      console.log('Iterating All Visiting History');
+
+                      this.visitHistoryList = [];
+                      this.originalVisitHistoryList.forEach(
+                        (visitHistoryObj: any) => {
+                          console.log('visitor ID = ' + visitHistoryObj.visitorId + ', loggedInUserId = ' + loggedInUserId);
+                          if (visitHistoryObj.visitorId == loggedInUserId)
+                            this.visitHistoryList.push(visitHistoryObj);
+                        }
+                      );
+                      this.sortVisitHistoryByDate();
+                      this.visitHistoryListDuplicate = this.visitHistoryList;
+                    } else {
+                      this.navCtrl.setRoot(LoginPage);
+                    }
+                  }
+                );
+            } else {
+              console.log('No Role Matched')
+            }
+          } else {
+            this.navCtrl.setRoot(LoginPage);
+          }
+        }
+      );
   }
 
   updateGeoFence(geoFence: GeoFence) {
@@ -492,5 +545,293 @@ export class VisitHistoryPage {
           }
         }
       );
+  }
+
+  presentSortingPopover(event: any) {
+
+    const popOver = this.popOverController.create(PopoverSortVisitPage, {
+      sortOrder: this.sortOrder
+    });
+
+    popOver.present({
+      ev: event
+    });
+
+    popOver.onDidDismiss(
+      (data) => {
+        if (data && data.sortData) {
+          let selectedSortOrder: number = Number.parseInt(data.sortOrder);
+          console.log('selectedSortOrder = ' + selectedSortOrder);
+
+          switch (selectedSortOrder) {
+
+            case 1:   //1 = Sort Data
+              let selectCustomerModal: Modal = this.modal.create(CustomerSelectionPage, {
+                modalData: null,
+                fromDate: '',
+                toDate: '',
+                salesExecutive: '',
+                isAddOperation: true
+              });
+
+              selectCustomerModal.present();
+
+              selectCustomerModal.onDidDismiss(
+                (selectCustomerModalData) => {
+                  console.log('selectCustomerModalData = ' + JSON.stringify(selectCustomerModalData));
+
+                  if (selectCustomerModalData.isAdded) {
+                    this.selectedCustomer = selectCustomerModalData.selectedCustomerDetails;
+                    this.fromDate = selectCustomerModalData.fromDate;
+                    this.toDate = selectCustomerModalData.toDate;
+                    this.salesExecutive = selectCustomerModalData.salesExecutive;
+
+                    let isCustomerSelected: boolean = this.selectedCustomer.cardName == '' ? false : true;
+
+                    this.filterVisitDataByAppliedFilters(isCustomerSelected,
+                      !this.isEmpty(this.fromDate), !this.isEmpty(this.toDate), !this.isEmpty(this.salesExecutive));
+                  }
+                });
+              this.sortOrder = selectedSortOrder;
+              break;
+
+            case 2:   //2 = Clear Sort   
+              this.updateVisitsDataFromDB();
+              this.sortVisitHistoryByDate();
+              this.sortOrder = selectedSortOrder;
+              break;
+
+            default:
+              console.log('Invalid Sort order selected');
+              break;
+          }
+        }
+      });
+  }
+
+  sortVisitHistoryByDate() {
+    this.visitHistoryList.sort(
+
+      (a, b) => this.momentjs(this.momentjs(a.entryDt, 'DDMMYY')).format('YYYY-MM-DD') >= this.momentjs(this.momentjs(b.entryDt, 'DDMMYY')).format('YYYY-MM-DD') ? -1 : 1
+    );
+  }
+
+  filterVisitDataByAppliedFilters(isCustomerSelected: boolean, isFromDateApplied: boolean,
+    isToDateApplied: boolean, isSalesExecutiveSelected: boolean) {
+
+    console.log('isCustomerSelected = ' + isCustomerSelected + ', isFromDateApplied = ' + isFromDateApplied
+      + ', isToDateApplied = ' + isToDateApplied + ', isSalesExecutiveSelected = ' + isSalesExecutiveSelected);
+
+    if (isCustomerSelected && isFromDateApplied && isToDateApplied && isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (
+            visitHistory.siteDtls.cardCode == this.selectedCustomer.cardCode
+            && visitHistory.visitorId == this.salesExecutive.userDtlsId
+            && visitorEntryDtFormatted >= this.fromDate
+            && visitorEntryDtFormatted <= this.toDate
+          )
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isCustomerSelected && isFromDateApplied && isToDateApplied && !isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (visitHistory.siteDtls.cardCode == this.selectedCustomer.cardCode
+            && visitorEntryDtFormatted >= this.fromDate
+            && visitorEntryDtFormatted <= this.toDate
+          )
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isCustomerSelected && isFromDateApplied && !isToDateApplied && !isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (
+            visitHistory.siteDtls.cardCode == this.selectedCustomer.cardCode
+            && visitorEntryDtFormatted >= this.fromDate
+          )
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isCustomerSelected && !isFromDateApplied && !isToDateApplied && !isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          console.log('visitEntryDt = ' + this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD')
+            + ', fromDate = ' + this.fromDate + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (visitHistory.siteDtls.cardCode == this.selectedCustomer.cardCode)
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isCustomerSelected && !isFromDateApplied && isToDateApplied && !isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (
+            visitHistory.siteDtls.cardCode == this.selectedCustomer.cardCode
+            && visitorEntryDtFormatted <= this.toDate
+          )
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isFromDateApplied && !isCustomerSelected && isToDateApplied && isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (
+            visitHistory.visitorId == this.salesExecutive.userDtlsId
+            && visitorEntryDtFormatted >= this.fromDate
+            && visitorEntryDtFormatted <= this.toDate
+          )
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isFromDateApplied && !isCustomerSelected && isToDateApplied && !isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (visitorEntryDtFormatted >= this.fromDate && visitorEntryDtFormatted <= this.toDate)
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isFromDateApplied && !isCustomerSelected && !isToDateApplied && isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (
+            visitHistory.visitorId == this.salesExecutive.userDtlsId
+            && visitorEntryDtFormatted >= this.fromDate
+          )
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isFromDateApplied && !isCustomerSelected && !isToDateApplied && !isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (visitorEntryDtFormatted >= this.fromDate)
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isToDateApplied && !isFromDateApplied && !isCustomerSelected && isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (
+            visitHistory.visitorId == this.salesExecutive.userDtlsId
+            && visitorEntryDtFormatted <= this.toDate
+          )
+            return true;
+          else
+            return false;
+        }
+      );
+    } else if (isToDateApplied && !isFromDateApplied && !isCustomerSelected && !isSalesExecutiveSelected) {
+      this.visitHistoryList = this.visitHistoryListDuplicate.filter(
+        (visitHistory: any) => {
+
+          let visitorEntryDtFormatted = this.momentjs(this.momentjs(visitHistory.entryDt, 'DDMMYY')).format('YYYY-MM-DD');
+
+          console.log('visitEntryDt = ' + visitorEntryDtFormatted + ', fromDate = ' + this.fromDate
+            + ', toDate = ' + this.toDate + ', cardCode = ' + visitHistory.siteDtls.cardCode);
+
+          if (visitorEntryDtFormatted <= this.toDate)
+            return true;
+          else
+            return false;
+        }
+      );
+    }
+
+    this.sortVisitHistoryByDate();
+  }
+
+  isEmpty(valueToCheck: any) {
+
+    if (
+      undefined == valueToCheck || 'undefined' == valueToCheck
+      || valueToCheck == '' || valueToCheck == null
+      || {} == valueToCheck || '{}' == valueToCheck
+    )
+      return true;
+    else
+      return false;
+  }
+
+  downloadExcel() {
+
+    console.log('downloadExcel VisitHistoryPage');
+
+    this.navCtrl.push(DownloadDetailsPage, {
+      case : "VISIT_HISTORY_XLSX_DOWNLAOD",
+      visitHistoryExcelData: this.visitHistoryList
+    })
   }
 }

@@ -81,6 +81,15 @@
             <span style="font-size:10px; color:#AFAFAF">{{momentjs(invoice.invoiceDate).format('DD MMM')}} |
               {{invoice.dueDateInDays}} Days | Due: {{momentjs(invoice.dueDate).format('DD MMM')}}</span>
           </ion-col>
+          <!-- <ion-col col-3 *ngIf="invoice.invoiceItemsList != null && invoice.invoiceItemsList != undefined">
+            <p><i class="fa fa-rupee"></i>
+              {{ invoice.grossTotal == 0 ? (Number.parseFloat(invoice.invoiceItemsList[0].total) +
+              Number.parseFloat(invoice.invoiceItemsList[0].cgstTax) +
+              Number.parseFloat(invoice.invoiceItemsList[0].sgstTax) +
+              Number.parseFloat(invoice.invoiceItemsList[0].roundDif)) : invoice.grossTotal}}
+            </p>
+            <span class="pj-bill-status">{{invoice.type}}</span>
+          </ion-col> -->
           <ion-col col-3>
             <p><i class="fa fa-rupee"></i> {{invoice.grossTotal}}</p>
             <span class="pj-bill-status">{{invoice.type}}</span>

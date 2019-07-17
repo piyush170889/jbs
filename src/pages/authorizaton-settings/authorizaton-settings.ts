@@ -66,7 +66,7 @@ export class AuthorizatonSettingsPage {
         //     );
 
         //Get RolesArray And UserDetails From Storage
-        this.databaseProvider.getItem('roles')
+        this.databaseProvider.getItem(ConstantsProvider.CONFIG_NM_ROLES)
             .then(
                 res => {
                     console.log('roles DB Call Response = ' + JSON.stringify(res));
@@ -79,7 +79,7 @@ export class AuthorizatonSettingsPage {
                         } else
                             this.rolesArray = null;
 
-                        this.databaseProvider.getItem('userDetails')
+                        this.databaseProvider.getItem(ConstantsProvider.CONFIG_NM_USER_DTLS)
                             .then(
                                 res => {
                                     if (res.rows.length > 0) {

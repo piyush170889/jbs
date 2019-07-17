@@ -9,7 +9,6 @@ import { DatePipe } from '@angular/common';
 import { CustomerDetailsPage } from '../customer-details/customer-details';
 import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
 import * as moment from 'moment-timezone';
-import { SignaturepadPage } from '../signaturepad/signaturepad';
 import { VerifyPinPage } from '../verify-pin/verify-pin';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -45,7 +44,8 @@ export class InvoiceDetailsPage {
   signature: any = '';
 
 
-  constructor(public navCtrl: NavController,
+  constructor(
+    public navCtrl: NavController,
     public navParams: NavParams,
     public file: File,
     public fileOpener: FileOpener,
@@ -54,7 +54,7 @@ export class InvoiceDetailsPage {
     private commonUtility: CommonUtilityProvider,
     private platform: Platform) {
 
-    console.log('Inside Invoice Details Page new');
+    console.log('Inside Invoice Details Page');
 
     this.platform.ready().then(() => {
       this.imgPath = cordova.file.applicationDirectory + 'www/assets/imgs/stamp.jpg';
@@ -95,6 +95,15 @@ export class InvoiceDetailsPage {
         + Number.parseFloat(this.invoice.invoiceItemsList[0].sgstTax);
       console.log('total Tax: ' + this.totalTax);
     }
+
+
+    // if (this.invoice.grossTotal == 0) {
+    //   this.invoice.grossTotal = this.invoice.invoiceItemsList[0].total +
+    //     this.invoice.invoiceItemsList[0].cgstTax + this.invoice.invoiceItemsList[0].sgstTax
+    //     + this.invoice.invoiceItemsList[0].roundDif;
+    // }
+
+    // console.log('GrossTotal = ' + this.invoice.grossTotal);
   }
 
 
@@ -177,7 +186,7 @@ export class InvoiceDetailsPage {
       { text: '', border: [false, false, true, false] },
       { text: '', border: [false, false, true, false] },
       { text: '', border: [false, false, true, false] },
-      { text: this.invoice.grossTotal, border: [false, false, false, false] }
+      { text: (this.invoice.grossTotal == 0 ? (Number.parseFloat(this.invoice.invoiceItemsList[0].total) + Number.parseFloat(this.invoice.invoiceItemsList[0].cgstTax) + Number.parseFloat(this.invoice.invoiceItemsList[0].sgstTax) + Number.parseFloat(this.invoice.invoiceItemsList[0].roundDif)) : this.invoice.grossTotal), border: [false, false, false, false] }
     ]);
 
     // let bodyContent: any[] = getTestBodyContent();

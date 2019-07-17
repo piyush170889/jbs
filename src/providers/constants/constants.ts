@@ -10,6 +10,7 @@ and Angular DI.
 @Injectable()
 export class ConstantsProvider {
 
+
   constructor(public http: HttpClient) {
     console.log('Hello ConstantsProvider Provider');
   }
@@ -17,7 +18,7 @@ export class ConstantsProvider {
   //Common API Constants
 
   // LOCAL
-  // public static API_BASE_URL: string = "http://192.168.43.162:8080/sapbasemodule/v1/";
+  public static API_BASE_URL: string = "http://192.168.43.162:8080/sapbasemodule/v1/";
 
   //DEV
   // public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapitest/v1/";
@@ -27,7 +28,7 @@ export class ConstantsProvider {
   // public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapitest/v1/";
 
   // PRODUCTION
-  public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapi/v1/";
+  // public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapi/v1/";
 
 
   //API Endpoints
@@ -101,5 +102,6 @@ export class ConstantsProvider {
   public static CONFIG_NM_LOCATIONS_DATA = 'locations';
   public static CONFIG_NM_LOCATION_UPDATE_TS = 'location_last_updated_ts';
   public static CONFIG_NM_ACK_INV_OFFLINE = "acknowledgement_offline";
-  
+  public static CONFIG_NM_USER_DTLS = "userDetails";
+  public static CONFIG_NM_ROLES = "roles";
 }

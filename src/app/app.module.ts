@@ -64,6 +64,9 @@ import { SignaturepadPage } from '../pages/signaturepad/signaturepad';
 import { LocationsDetailsPage } from '../pages/locations-details/locations-details';
 import { VerifyPinPage } from '../pages/verify-pin/verify-pin';
 import { GeneratePinReviewPage } from '../pages/generate-pin-review/generate-pin-review';
+import { PopoverSortVisitPage } from '../pages/popover-sort-visit/popover-sort-visit';
+import { CustomerSelectionPage } from '../pages/customer-selection/customer-selection';
+import { DownloadDetailsPage } from '../pages/download-details/download-details';
 // import { Storage } from '@ionic/storage';
 
 
@@ -109,7 +112,10 @@ import { GeneratePinReviewPage } from '../pages/generate-pin-review/generate-pin
     SignaturepadPage,
     LocationsDetailsPage,
     VerifyPinPage,
-    GeneratePinReviewPage
+    GeneratePinReviewPage,
+    PopoverSortVisitPage,
+    CustomerSelectionPage,
+    DownloadDetailsPage
   ],
   imports: [
     BrowserModule,
@@ -159,7 +165,10 @@ import { GeneratePinReviewPage } from '../pages/generate-pin-review/generate-pin
     SignaturepadPage,
     LocationsDetailsPage,
     VerifyPinPage,
-    GeneratePinReviewPage
+    GeneratePinReviewPage,
+    PopoverSortVisitPage,
+    CustomerSelectionPage,
+    DownloadDetailsPage
   ],
   providers: [
     StatusBar,

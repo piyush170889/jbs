@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
 /**
- * Generated class for the PopoverSortFiltersPage page.
+ * Generated class for the PopoverSortVisitPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -10,27 +10,29 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
 
 @IonicPage()
 @Component({
-  selector: 'page-popover-sort-filters',
-  templateUrl: 'popover-sort-filters.html',
+  selector: 'page-popover-sort-visit',
+  templateUrl: 'popover-sort-visit.html',
 })
-export class PopoverSortFiltersPage {
+export class PopoverSortVisitPage {
 
   sortOrder: number = 0;
-  isCustMgmt: boolean = false;
 
-  constructor(public navCtrl: NavController,
+  constructor(
+    public navCtrl: NavController, 
     public navParams: NavParams,
     private viewController: ViewController
     ) {
-
-    this.sortOrder = Number.parseInt(this.navParams.get('sortOrder'));
-    this.isCustMgmt = this.navParams.get('isCustMgmt') == null || this.navParams.get('isCustMgmt') == undefined ? false : this.navParams.get('isCustMgmt');
-
-    console.log('Sort Order = ' + this.sortOrder + ', isCustMgmt : ' + this.isCustMgmt);
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad PopoverSortFiltersPage');
+    console.log('ionViewDidLoad PopoverSortVisitPage');
+  }
+
+  ionViewDidEnter() {
+
+    console.log('ionViewDidEnter PopoverSortVisitPage');
+    this.sortOrder = Number.parseInt(this.navParams.get('sortOrder'));
+    console.log('sortOrder = ' + this.sortOrder);
   }
 
   dismissPopOver(data: any) {

@@ -95,11 +95,13 @@ export class LedgerListingDetailsPage {
         (invoice: any) => {
 
           let formattedInvoiceDate = this.momentjs(invoice.invoiceDate).format('YYYY-MM-DD');
-          console.log('invoiceDate = ' + formattedInvoiceDate
+          console.log('Invoice no = ' + invoice.invoiceNo + ', invoiceDate = ' + formattedInvoiceDate
             + ', fromDate = ' + this.fromDate + ', tillDate = ' + this.tillDate);
 
           if (formattedInvoiceDate >= this.fromDate && formattedInvoiceDate <= this.tillDate) {
-            console.log("Pass: " + JSON.stringify('Invoice no = ' + invoice.invoiceNo));
+
+            console.log("Pass: " + JSON.stringify('Invoice no = ' + invoice.invoiceNo) + ", grossTotal = " + invoice.grossTotal);
+
             sortedList.push(invoice);
             this.totalDebitBalance = this.totalDebitBalance + Number.parseFloat(invoice.debit);
             this.totalCreditBalance = this.totalCreditBalance + Number.parseFloat(invoice.credit);
