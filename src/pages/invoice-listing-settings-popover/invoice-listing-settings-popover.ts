@@ -23,7 +23,7 @@ export class InvoiceListingSettingsPopoverPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad InvoiceListingSettingsPopoverPage');
   }
-  
+
   dismissPopOver(data: any) {
 
     this.viewController.dismiss(data);
@@ -34,9 +34,19 @@ export class InvoiceListingSettingsPopoverPage {
     console.log('showLedgerReport InvoiceListingSettingsPopoverPage');
 
     this.dismissPopOver({
-      showLedger: true
-    })
+      showLedger: true,
+      showSummary: false
+    });
+  }
 
+  showSummaryReport() {
+
+    console.log('showSummaryReport InvoiceListingSettingsPopoverPage');
+
+    this.dismissPopOver({
+      showLedger: false,
+      showSummary: true
+    });
   }
 
 }

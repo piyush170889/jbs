@@ -19,6 +19,7 @@ import { PopoverSortFiltersPage } from '../popover-sort-filters/popover-sort-fil
 import { ModalLedgerOptionsPage } from '../modal-ledger-options/modal-ledger-options';
 import * as moment from 'moment-timezone';
 import { LedgerListingDetailsPage } from '../ledger-listing-details/ledger-listing-details';
+import { CustomerSummaryReportPage } from '../customer-summary-report/customer-summary-report';
 
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -379,6 +380,11 @@ export class CustomerDetailsPage {
           this.navCtrl.push(LedgerListingDetailsPage, {
             ledgerInvoiceList: this.ledgerInvoiceList,
             customer: this.customer
+          })
+        } else if (data && data.showSummary) {
+          this.navCtrl.push(CustomerSummaryReportPage, {
+            customerDetails: this.customer.customerDetails,
+            cutomerSummaryReportDetailsList: this.customer.cutomerSummaryReportDetailsList
           })
         }
       }

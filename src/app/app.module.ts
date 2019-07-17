@@ -67,6 +67,7 @@ import { GeneratePinReviewPage } from '../pages/generate-pin-review/generate-pin
 import { PopoverSortVisitPage } from '../pages/popover-sort-visit/popover-sort-visit';
 import { CustomerSelectionPage } from '../pages/customer-selection/customer-selection';
 import { DownloadDetailsPage } from '../pages/download-details/download-details';
+import { CustomerSummaryReportPage } from '../pages/customer-summary-report/customer-summary-report';
 // import { Storage } from '@ionic/storage';
 
 
@@ -115,7 +116,8 @@ import { DownloadDetailsPage } from '../pages/download-details/download-details'
     GeneratePinReviewPage,
     PopoverSortVisitPage,
     CustomerSelectionPage,
-    DownloadDetailsPage
+    DownloadDetailsPage,
+    CustomerSummaryReportPage
   ],
   imports: [
     BrowserModule,
@@ -168,7 +170,8 @@ import { DownloadDetailsPage } from '../pages/download-details/download-details'
     GeneratePinReviewPage,
     PopoverSortVisitPage,
     CustomerSelectionPage,
-    DownloadDetailsPage
+    DownloadDetailsPage,
+    CustomerSummaryReportPage
   ],
   providers: [
     StatusBar,
