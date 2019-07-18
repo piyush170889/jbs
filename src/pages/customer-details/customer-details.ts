@@ -136,8 +136,55 @@ export class CustomerDetailsPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad CustomerDetailsPage');
-    this.customerAllInvoicesList = this.customer.customerInvoicesList;
-    this.originalCustomerAllInvoicesList = this.customer.customerInvoicesList;
+
+    //OLD CODE
+    // this.customerAllInvoicesList = this.customer.customerInvoicesList;
+    // this.originalCustomerAllInvoicesList = this.customer.customerInvoicesList;
+
+    //NEW CODE
+    let invoiceSortedList: any[] = this.customer.customerInvoicesList;
+
+    invoiceSortedList.forEach(
+      (invoice: any) => {
+        console.log('Invoice In Iteration = ' + JSON.stringify(invoice));
+        // if (invoice.type == "IN" && invoice.grossTotal == 0) {
+        if (invoice.type == "IN") {
+          let invoiceItemListToIterate: any[] = invoice.invoiceItemsList;
+
+          let invoiceActualTotal: number = 0;
+          let invoiceTotalCgstTax: number = 0;
+          let invoiceTotalSgstTax: number = 0;
+          let invoiceTotalRoundOff: number = 0;
+
+          invoiceItemListToIterate.forEach(
+            (invoiceItem: any) => {
+              invoiceTotalCgstTax = invoiceTotalCgstTax + Number.parseFloat(Number.parseFloat(invoiceItem.cgstTax).toFixed(2));
+              invoiceTotalSgstTax = invoiceTotalSgstTax + Number.parseFloat(Number.parseFloat(invoiceItem.sgstTax).toFixed(2));
+              invoiceTotalRoundOff = invoiceTotalRoundOff + Number.parseFloat(Number.parseFloat(invoiceItem.roundDif).toFixed(2));
+              invoiceActualTotal = invoiceActualTotal + Number.parseFloat(Number.parseFloat(invoiceItem.total + invoiceItem.cgstTax
+                + invoiceItem.sgstTax + invoiceItem.roundDif).toFixed(2));
+            }
+          );
+
+          invoice.actualTotal = invoiceActualTotal;
+          invoice.invoiceTotalCgstTax = invoiceTotalCgstTax;
+          invoice.invoiceTotalSgstTax = invoiceTotalSgstTax;
+          invoice.invoiceTotalRoundOff = invoiceTotalRoundOff;
+        } else {
+          invoice.actualTotal = invoice.grossTotal;
+          invoice.invoiceTotalCgstTax = invoice.cgstTax;
+          invoice.invoiceTotalSgstTax = invoice.sgstTax;
+          invoice.invoiceTotalRoundOff = invoice.roundDif;
+        }
+
+        console.log('Gross Total = ' + invoice.grossTotal + ', Actual Total = ' + invoice.actualTotal);
+
+        this.customerAllInvoicesList.push(invoice);
+      }
+    );
+
+    this.originalCustomerAllInvoicesList = this.customerAllInvoicesList;
+    //.NEW CODE
 
     this.setCustomerBalanceAndDueDateInDays();
     this.updateLedgerList();

@@ -98,7 +98,8 @@
               <i class="fa fa-rupee"></i> {{customerBalance}}
             </strong>
           </span>
-          <p style="color:#E4EBED;font-size:10px;">( Pending Invoice Balance As Of {{momentjs(tillDate).format('DD MMM YY')}} |
+          <p style="color:#E4EBED;font-size:10px;">( Pending Invoice Balance As Of {{momentjs(tillDate).format('DD MMM
+            YY')}} |
             > {{displayCriteria}} )</p>
         </ion-col>
       </ion-row>
@@ -133,12 +134,14 @@
         <ion-row>
           <ion-col col-9>
             <p color="light"><strong>{{invoice.invoiceNo}}</strong></p>
-            <span style="font-size:10px; color:#AFAFAF">{{momentjs(invoice.invoiceDate).format('DD MMM')}} | {{invoice.dueDateInDays}} Days | Due: {{momentjs(invoice.dueDate).format('DD MMM')}}</span>
+            <span style="font-size:10px; color:#AFAFAF">{{momentjs(invoice.invoiceDate).format('DD MMM')}} |
+              {{invoice.dueDateInDays}} Days | Due: {{momentjs(invoice.dueDate).format('DD MMM')}}</span>
             <!-- <span style="font-size:10px; color:#AFAFAF">{{invoice.invoiceDate |
             date: 'dd MMM'}}</span> -->
           </ion-col>
           <ion-col col-3>
-            <p><i class="fa fa-rupee"></i> {{invoice.grossTotal}}</p>
+            <!-- <p><i class="fa fa-rupee"></i> {{invoice.grossTotal}}</p> -->
+            <p><i class="fa fa-rupee"></i> {{invoice.actualTotal}}</p>
             <span class="pj-bill-status">{{invoice.type}}</span>
           </ion-col>
         </ion-row>

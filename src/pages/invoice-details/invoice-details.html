@@ -134,13 +134,17 @@
       <span><strong>Gross Total</strong></span>
     </ion-col>
     <ion-col col-4>
+      <span><strong><i class="fa fa-rupee"></i>{{invoice.actualTotal}}</strong></span>
       <!-- <span><strong><i class="fa fa-rupee"></i>{{invoice.grossTotal}}</strong></span> -->
-      <span><strong><i class="fa fa-rupee"></i>
-          {{ invoice.grossTotal == 0 ? (Number.parseFloat(invoice.invoiceItemsList[0].total) +
-          Number.parseFloat(invoice.invoiceItemsList[0].cgstTax) +
-          Number.parseFloat(invoice.invoiceItemsList[0].sgstTax) +
-          Number.parseFloat(invoice.invoiceItemsList[0].roundDif)) : invoice.grossTotal}}
-        </strong></span>
+    </ion-col>
+  </ion-row>
+
+  <ion-row padding>
+    <ion-col col-8>
+      <span><strong>Pending Due</strong></span>
+    </ion-col>
+    <ion-col col-4>
+      <span><strong><i class="fa fa-rupee"></i>{{invoice.grossTotal}}</strong></span>
     </ion-col>
   </ion-row>
 
@@ -444,10 +448,11 @@
 
         </td>
         <td style="border:1px solid #000;">
-          {{ invoice.grossTotal == 0 ? (Number.parseFloat(invoice.invoiceItemsList[0].total) +
+          {{ invoice.actualTotal }}
+          <!-- {{ invoice.grossTotal == 0 ? (Number.parseFloat(invoice.invoiceItemsList[0].total) +
           Number.parseFloat(invoice.invoiceItemsList[0].cgstTax) +
           Number.parseFloat(invoice.invoiceItemsList[0].sgstTax) +
-          Number.parseFloat(invoice.invoiceItemsList[0].roundDif)) : invoice.grossTotal}}
+          Number.parseFloat(invoice.invoiceItemsList[0].roundDif)) : invoice.grossTotal}} -->
           <!-- {{invoice.grossTotal}} -->
         </td>
       </tr>
