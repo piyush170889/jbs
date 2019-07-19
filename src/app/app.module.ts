@@ -68,6 +68,7 @@ import { PopoverSortVisitPage } from '../pages/popover-sort-visit/popover-sort-v
 import { CustomerSelectionPage } from '../pages/customer-selection/customer-selection';
 import { DownloadDetailsPage } from '../pages/download-details/download-details';
 import { CustomerSummaryReportPage } from '../pages/customer-summary-report/customer-summary-report';
+import { SummaryReportPage } from '../pages/summary-report/summary-report';
 // import { Storage } from '@ionic/storage';
 
 
@@ -117,7 +118,8 @@ import { CustomerSummaryReportPage } from '../pages/customer-summary-report/cust
     PopoverSortVisitPage,
     CustomerSelectionPage,
     DownloadDetailsPage,
-    CustomerSummaryReportPage
+    CustomerSummaryReportPage,
+    SummaryReportPage
   ],
   imports: [
     BrowserModule,
@@ -171,7 +173,8 @@ import { CustomerSummaryReportPage } from '../pages/customer-summary-report/cust
     PopoverSortVisitPage,
     CustomerSelectionPage,
     DownloadDetailsPage,
-    CustomerSummaryReportPage
+    CustomerSummaryReportPage,
+    SummaryReportPage
   ],
   providers: [
     StatusBar,

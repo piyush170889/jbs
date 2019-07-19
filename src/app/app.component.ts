@@ -19,6 +19,7 @@ import { SQLiteObject } from '@ionic-native/sqlite';
 import { VisitHistoryPage } from '../pages/visit-history/visit-history';
 import { TestPage } from '../pages/test/test';
 import { LocationsPage } from '../pages/locations/locations';
+import { SummaryReportPage } from '../pages/summary-report/summary-report';
 
 const config = {
     apiKey: 'AIzaSyAwE6RUI2st4uTM40fotjuPJVRJNfuayko',
@@ -175,6 +176,7 @@ export class MyApp {
                                 { title: 'Users Mgmt', component: AdminUsersPage },
                                 { title: 'Visits', component: VisitHistoryPage },
                                 { title: 'Locations', component: LocationsPage },
+                                { title: 'Summary Report', component: SummaryReportPage },
                                 { title: 'Settings', component: SettingsPage },
                             );
                         } else if (rolesArray.indexOf(ConstantsProvider.ROLE_SALES) > -1) {
@@ -184,6 +186,7 @@ export class MyApp {
                                 { title: 'Visits', component: VisitHistoryPage },
                                 { title: 'Locations', component: LocationsPage },
                                 { title: 'Orders', component: OrderMgmtPage },
+                                { title: 'Summary Report', component: SummaryReportPage },
                                 { title: 'Settings', component: SettingsPage }
                             );
                         } else {

@@ -830,7 +830,7 @@ export class VisitHistoryPage {
     console.log('downloadExcel VisitHistoryPage');
 
     this.navCtrl.push(DownloadDetailsPage, {
-      case : "VISIT_HISTORY_XLSX_DOWNLAOD",
+      case: "VISIT_HISTORY_XLSX_DOWNLAOD",
       visitHistoryExcelData: this.visitHistoryList
     })
   }

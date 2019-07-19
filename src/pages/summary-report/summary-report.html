@@ -1,0 +1,57 @@
+<!--
+  Generated template for the SummaryReportPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="navbar" text-center>
+    <ion-title>Summary Report</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <div class="scroll-table-div">
+    <table>
+      <tr>
+        <th class="headcol">Customer Name</th>
+        <td class="long bold-heading">Sale Emp Name</td>
+        <td class="long bold-heading">Brand</td>
+        <td class="long bold-heading">Apr</td>
+        <td class="long bold-heading">May</td>
+        <td class="long bold-heading">Jun</td>
+        <td class="long bold-heading">Jul</td>
+        <td class="long bold-heading">Aug</td>
+        <td class="long bold-heading">Sep</td>
+        <td class="long bold-heading">Oct</td>
+        <td class="long bold-heading">Nov</td>
+        <td class="long bold-heading">Dec</td>
+        <td class="long bold-heading">Jan</td>
+        <td class="long bold-heading">Feb</td>
+        <td class="long bold-heading">Mar</td>
+      </tr>
+      <tr *ngFor="let summaryReport of summaryReportList">
+        <th class="headcol">{{summaryReport.cardName}}</th>
+        <th class="long">{{summaryReport.salesEmpName}}</th>
+        <th class="long">{{summaryReport.brand}}</th>
+        <th class="long">{{summaryReport.apr}}</th>
+        <th class="long">{{summaryReport.may}}</th>
+        <th class="long">{{summaryReport.jun}}</th>
+        <th class="long">{{summaryReport.jul}}</th>
+        <th class="long">{{summaryReport.aug}}</th>
+        <th class="long">{{summaryReport.sep}}</th>
+        <th class="long">{{summaryReport.oct}}</th>
+        <th class="long">{{summaryReport.nov}}</th>
+        <th class="long">{{summaryReport.dec}}</th>
+        <th class="long">{{summaryReport.jan}}</th>
+        <th class="long">{{summaryReport.feb}}</th>
+        <th class="long">{{summaryReport.mar}}</th>
+      </tr>
+    </table>
+  </div>
+
+</ion-content>
