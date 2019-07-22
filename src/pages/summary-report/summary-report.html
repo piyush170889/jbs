@@ -15,24 +15,30 @@
 
 <ion-content padding>
 
+  <ion-row>
+    <ion-col col-12 text-center color="light" (click)="clearFilters()">
+      Clear Filters
+    </ion-col>
+  </ion-row>
+
   <div class="scroll-table-div">
     <table>
       <tr>
-        <th class="headcol">Customer Name</th>
-        <td class="long bold-heading">Sale Emp Name</td>
-        <td class="long bold-heading">Brand</td>
-        <td class="long bold-heading">Apr</td>
-        <td class="long bold-heading">May</td>
-        <td class="long bold-heading">Jun</td>
-        <td class="long bold-heading">Jul</td>
-        <td class="long bold-heading">Aug</td>
-        <td class="long bold-heading">Sep</td>
-        <td class="long bold-heading">Oct</td>
-        <td class="long bold-heading">Nov</td>
-        <td class="long bold-heading">Dec</td>
-        <td class="long bold-heading">Jan</td>
-        <td class="long bold-heading">Feb</td>
-        <td class="long bold-heading">Mar</td>
+        <th class="headcol light-color" (click)="sortByCust()">Customer Name</th>
+        <td class="long bold-heading light-color" (click)="sortBySalesEmp()">Sale Emp Name</td>
+        <td class="long bold-heading light-color" (click)="sortByBrand()">Brand</td>
+        <td class="long bold-heading light-color">Apr</td>
+        <td class="long bold-heading light-color">May</td>
+        <td class="long bold-heading light-color">Jun</td>
+        <td class="long bold-heading light-color">Jul</td>
+        <td class="long bold-heading light-color">Aug</td>
+        <td class="long bold-heading light-color">Sep</td>
+        <td class="long bold-heading light-color">Oct</td>
+        <td class="long bold-heading light-color">Nov</td>
+        <td class="long bold-heading light-color">Dec</td>
+        <td class="long bold-heading light-color">Jan</td>
+        <td class="long bold-heading light-color">Feb</td>
+        <td class="long bold-heading light-color">Mar</td>
       </tr>
       <tr *ngFor="let summaryReport of summaryReportList">
         <th class="headcol">{{summaryReport.cardName}}</th>

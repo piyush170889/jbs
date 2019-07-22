@@ -69,6 +69,8 @@ import { CustomerSelectionPage } from '../pages/customer-selection/customer-sele
 import { DownloadDetailsPage } from '../pages/download-details/download-details';
 import { CustomerSummaryReportPage } from '../pages/customer-summary-report/customer-summary-report';
 import { SummaryReportPage } from '../pages/summary-report/summary-report';
+import { CustFilterModalPage } from '../pages/cust-filter-modal/cust-filter-modal';
+import { SaleempFilterModalPage } from '../pages/saleemp-filter-modal/saleemp-filter-modal';
 // import { Storage } from '@ionic/storage';
 
 
@@ -119,7 +121,9 @@ import { SummaryReportPage } from '../pages/summary-report/summary-report';
     CustomerSelectionPage,
     DownloadDetailsPage,
     CustomerSummaryReportPage,
-    SummaryReportPage
+    SummaryReportPage,
+    CustFilterModalPage,
+    SaleempFilterModalPage
   ],
   imports: [
     BrowserModule,
@@ -174,7 +178,9 @@ import { SummaryReportPage } from '../pages/summary-report/summary-report';
     CustomerSelectionPage,
     DownloadDetailsPage,
     CustomerSummaryReportPage,
-    SummaryReportPage
+    SummaryReportPage,
+    CustFilterModalPage,
+    SaleempFilterModalPage
   ],
   providers: [
     StatusBar,

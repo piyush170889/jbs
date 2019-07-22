@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Modal, ModalController } from 'ionic-angular';
 import { DatabaseProvider } from '../../providers/database/database';
 import { ConstantsProvider } from '../../providers/constants/constants';
 import { CommonUtilityProvider } from '../../providers/common-utility/common-utility';
 import { SQLiteObject } from '@ionic-native/sqlite';
 import { Network } from '@ionic-native/network';
 import { RestserviceProvider } from '../../providers/restservice/restservice';
+import { CustFilterModalPage } from '../cust-filter-modal/cust-filter-modal';
+import { SaleempFilterModalPage } from '../saleemp-filter-modal/saleemp-filter-modal';
 
 /**
  * Generated class for the SummaryReportPage page.
@@ -34,7 +36,8 @@ export class SummaryReportPage {
     private databaseProvider: DatabaseProvider,
     private commonUtility: CommonUtilityProvider,
     private network: Network,
-    private restService: RestserviceProvider
+    private restService: RestserviceProvider,
+    private modal: ModalController
   ) {
 
     this.isDataSynching = false;
@@ -80,8 +83,9 @@ export class SummaryReportPage {
           if (res.rows.length > 0) {
 
             console.log('Summary Report Data = ' + res.rows.item(0).data);
-            this.originalSummaryReportList = JSON.parse(res.rows.item(0).data);
-            this.summaryReportList = this.originalSummaryReportList;
+            let dbSummaryReportList = JSON.parse(res.rows.item(0).data);
+            this.originalSummaryReportList = dbSummaryReportList;
+            this.summaryReportList = dbSummaryReportList;
           }
 
           this.orginalListDuplicate = this.originalSummaryReportList;
@@ -204,8 +208,13 @@ export class SummaryReportPage {
                       [ConstantsProvider.CONFIG_NM_LAST_UPDATED_TS_SUMM_RPT, new Date().toISOString()])
                       .then(res => {
                         console.log('Inserted Summary Report Last Updated Ts Record');
+                        this.updateSummaryReportsDataFromDB();
+                        this.isDataSynching = false;
                       })
-                      .catch(e => console.log(JSON.stringify(e)));
+                      .catch(e => {
+                        console.log(JSON.stringify(e))
+                        this.isDataSynching = false;
+                      });
                   }
                 }
               );
@@ -218,5 +227,56 @@ export class SummaryReportPage {
       .catch(e => {
         console.log(JSON.stringify(e))
       });
+  }
+
+  sortByCust() {
+    console.log('sortByCust() SummaryReportsPage');
+
+    let custFilterModal: Modal = this.modal.create(CustFilterModalPage, {
+      summaryReportList: this.summaryReportList
+    });
+
+    custFilterModal.present();
+
+    custFilterModal.onDidDismiss(
+      (custFilterModalData) => {
+        console.log('custFilterModalData = ' + JSON.stringify(custFilterModalData));
+
+        if (custFilterModalData.isAdded) {
+          console.log('summaryReportList = ' + JSON.stringify(custFilterModalData.summaryReportList));
+          this.summaryReportList = custFilterModalData.summaryReportList;
+        }
+      });
+  }
+
+  sortBySalesEmp() {
+    console.log('sortBySalesEmp() SummaryReportsPage')
+
+    let saleEmpFilterModal: Modal = this.modal.create(SaleempFilterModalPage, {
+      summaryReportList: this.summaryReportList
+    });
+
+    saleEmpFilterModal.present();
+
+    saleEmpFilterModal.onDidDismiss(
+      (saleEmpFilterModalData) => {
+        console.log('saleEmpFilterModalData = ' + JSON.stringify(saleEmpFilterModalData));
+
+        if (saleEmpFilterModalData.isAdded) {
+          console.log('summaryReportList = ' + JSON.stringify(saleEmpFilterModalData.summaryReportList));
+          this.summaryReportList = saleEmpFilterModalData.summaryReportList;
+        }
+      });
+  }
+
+  sortByBrand() {
+    console.log('sortByBrand() SummaryReportsPage')
+  }
+
+
+  clearFilters() {
+    console.log('clearFilters CustFilterModalPage');
+
+    this.summaryReportList = this.originalSummaryReportList;
   }
 }

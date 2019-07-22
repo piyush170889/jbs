@@ -37,4 +37,9 @@ page-summary-report {
       .bold-heading {
         font-weight: bold !important;
       }
+
+      .light-color {
+        color: color($colors, light, base) !important;
+        border-bottom: 1px solid color($colors, light, base) !important;
+      }
 }
