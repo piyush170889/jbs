@@ -20,6 +20,7 @@ import { VisitHistoryPage } from '../pages/visit-history/visit-history';
 import { TestPage } from '../pages/test/test';
 import { LocationsPage } from '../pages/locations/locations';
 import { SummaryReportPage } from '../pages/summary-report/summary-report';
+import { VehicleListPage } from '../pages/vehicle-list/vehicle-list';
 
 const config = {
     apiKey: 'AIzaSyAwE6RUI2st4uTM40fotjuPJVRJNfuayko',
@@ -55,7 +56,8 @@ export class MyApp {
         // this.rootPage = TestPage;
 
         this.pages.push(
-            { title: 'TestPage', component: TestPage }
+            { title: 'TestPage', component: TestPage },
+            { title: 'Vehicle Mgmt', component: VehicleListPage },
         );
 
         platform.ready().then(() => {
@@ -178,6 +180,7 @@ export class MyApp {
                                 { title: 'Locations', component: LocationsPage },
                                 { title: 'Summary Report', component: SummaryReportPage },
                                 { title: 'Settings', component: SettingsPage },
+                                { title: 'Vehicle Mgmt', component: VehicleListPage }
                             );
                         } else if (rolesArray.indexOf(ConstantsProvider.ROLE_SALES) > -1) {
                             console.log('ROLE_SALES Matched');

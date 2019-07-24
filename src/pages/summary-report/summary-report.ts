@@ -8,6 +8,9 @@ import { Network } from '@ionic-native/network';
 import { RestserviceProvider } from '../../providers/restservice/restservice';
 import { CustFilterModalPage } from '../cust-filter-modal/cust-filter-modal';
 import { SaleempFilterModalPage } from '../saleemp-filter-modal/saleemp-filter-modal';
+import { BrandFilterModalPage } from '../brand-filter-modal/brand-filter-modal';
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
+
 
 /**
  * Generated class for the SummaryReportPage page.
@@ -37,8 +40,15 @@ export class SummaryReportPage {
     private commonUtility: CommonUtilityProvider,
     private network: Network,
     private restService: RestserviceProvider,
-    private modal: ModalController
+    private modal: ModalController,
+    private screenOrientation: ScreenOrientation
   ) {
+    // get current
+    console.log("screenOrientation = " + this.screenOrientation.type); // logs the current orientation, example: 'landscape'
+
+    // set to landscape
+    if (this.screenOrientation.type != this.screenOrientation.ORIENTATIONS.LANDSCAPE)
+      this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.LANDSCAPE);
 
     this.isDataSynching = false;
 
@@ -73,6 +83,13 @@ export class SummaryReportPage {
     console.log('ionViewDidLoad SummaryReportPage');
   }
 
+  ionViewWillLeave() {
+    console.log('ionViewWillLeave SummaryReportPage');
+
+    //unlock screenorientation
+    this.screenOrientation.unlock();
+  }
+
   updateSummaryReportsDataFromDB() {
 
     console.log('updateSummaryReportsDataFromDB SummaryReportPage');
@@ -83,7 +100,10 @@ export class SummaryReportPage {
           if (res.rows.length > 0) {
 
             console.log('Summary Report Data = ' + res.rows.item(0).data);
-            let dbSummaryReportList = JSON.parse(res.rows.item(0).data);
+            let dbSummaryReportList: any[] = JSON.parse(res.rows.item(0).data);
+
+            dbSummaryReportList = this.commonUtility.resetSummaryReportDisplayData(dbSummaryReportList);
+
             this.originalSummaryReportList = dbSummaryReportList;
             this.summaryReportList = dbSummaryReportList;
           }
@@ -271,6 +291,23 @@ export class SummaryReportPage {
 
   sortByBrand() {
     console.log('sortByBrand() SummaryReportsPage')
+
+
+    let brandFilterModal: Modal = this.modal.create(BrandFilterModalPage, {
+      summaryReportList: this.summaryReportList
+    });
+
+    brandFilterModal.present();
+
+    brandFilterModal.onDidDismiss(
+      (brandFilterModalData) => {
+        console.log('brandFilterModalData = ' + JSON.stringify(brandFilterModalData));
+
+        if (brandFilterModalData.isAdded) {
+          console.log('summaryReportList = ' + JSON.stringify(brandFilterModalData.summaryReportList));
+          this.summaryReportList = brandFilterModalData.summaryReportList;
+        }
+      });
   }
 
 
@@ -279,4 +316,5 @@ export class SummaryReportPage {
 
     this.summaryReportList = this.originalSummaryReportList;
   }
+
 }

@@ -29,7 +29,7 @@ export class CommonUtilityProvider {
         );
 
         customer.customerInvoicesList = customerInvoiceList
-        
+
         this.saveCustomerRecord(customer);
 
         return true;
@@ -537,5 +537,28 @@ export class CommonUtilityProvider {
             return false;
         else
             return true;
+    }
+
+
+    resetSummaryReportDisplayData(summaryReportList: any[]) {
+
+        summaryReportList.forEach(
+            summaryRecord => {
+                summaryRecord.displayBrand = summaryRecord.brand;
+                summaryRecord.displayApr = summaryRecord.apr;
+                summaryRecord.displayMay = summaryRecord.may;
+                summaryRecord.displayJun = summaryRecord.jun;
+                summaryRecord.displayJul = summaryRecord.jul;
+                summaryRecord.displayAug = summaryRecord.aug;
+                summaryRecord.displaySep = summaryRecord.sep;
+                summaryRecord.displayOct = summaryRecord.oct;
+                summaryRecord.displayNov = summaryRecord.nov;
+                summaryRecord.displayDec = summaryRecord.dec;
+                summaryRecord.displayJan = summaryRecord.jan;
+                summaryRecord.displayFeb = summaryRecord.feb;
+                summaryRecord.displayMar = summaryRecord.mar;
+            });
+
+        return summaryReportList;
     }
 }

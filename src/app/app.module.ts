@@ -71,7 +71,11 @@ import { CustomerSummaryReportPage } from '../pages/customer-summary-report/cust
 import { SummaryReportPage } from '../pages/summary-report/summary-report';
 import { CustFilterModalPage } from '../pages/cust-filter-modal/cust-filter-modal';
 import { SaleempFilterModalPage } from '../pages/saleemp-filter-modal/saleemp-filter-modal';
+import { BrandFilterModalPage } from '../pages/brand-filter-modal/brand-filter-modal';
 // import { Storage } from '@ionic/storage';
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { VehicleListPage } from '../pages/vehicle-list/vehicle-list';
+import { VehicleTrackingPage } from '../pages/vehicle-tracking/vehicle-tracking';
 
 
 @NgModule({
@@ -123,7 +127,10 @@ import { SaleempFilterModalPage } from '../pages/saleemp-filter-modal/saleemp-fi
     CustomerSummaryReportPage,
     SummaryReportPage,
     CustFilterModalPage,
-    SaleempFilterModalPage
+    SaleempFilterModalPage,
+    BrandFilterModalPage,
+    VehicleListPage,
+    VehicleTrackingPage
   ],
   imports: [
     BrowserModule,
@@ -180,7 +187,10 @@ import { SaleempFilterModalPage } from '../pages/saleemp-filter-modal/saleemp-fi
     CustomerSummaryReportPage,
     SummaryReportPage,
     CustFilterModalPage,
-    SaleempFilterModalPage
+    SaleempFilterModalPage,
+    BrandFilterModalPage,
+    VehicleListPage,
+    VehicleTrackingPage
   ],
   providers: [
     StatusBar,
@@ -203,7 +213,8 @@ import { SaleempFilterModalPage } from '../pages/saleemp-filter-modal/saleemp-fi
     Diagnostic,
     CallNumber,
     SQLite,
-    DatabaseProvider
+    DatabaseProvider,
+    ScreenOrientation
   ]
 })
 export class AppModule { }

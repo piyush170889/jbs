@@ -1,6 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, ToastController } from 'ionic-angular';
 import * as moment from 'moment-timezone';
+import HashMap from 'HashMap';
+
 
 /**
  * Generated class for the TestPage page.
@@ -20,6 +22,11 @@ export class TestPage {
 
   constructor(public navController: NavController,
     public toastCtrl: ToastController) {
+
+    var custSummHashMap = new HashMap();
+    custSummHashMap.set('TestKey', 'TestVal');
+
+    console.log('key = TestKey, Value = ' + custSummHashMap.get('TestKey'));
 
   }
 

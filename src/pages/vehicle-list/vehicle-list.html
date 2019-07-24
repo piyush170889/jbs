@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-navbar color="navbar">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title text-center>Vehicle Management</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  
+  <!-- Vehicles List -->
+  <ion-list>
+      <button ion-item *ngFor="let vehicle of vehiclesList" (click)="vehicleSelected(vehicle)">
+        <h2 class="fm-title">VIN - {{ vehicle.vin }}</h2>
+        <h3 class="fm-sub-title">Vehicle No. - {{ vehicle.vehicleNo }}</h3>
+        <!-- <h3 class="fm-sub-title">Assigned Driver - {{ vehicle.assignedDrvFNm }} {{ vehicle.assignedDrvSNm }}</h3> -->
+        <ion-icon name="ios-arrow-forward" style="color:#ee7e2d" item-end></ion-icon>
+      </button>  
+  </ion-list>
+
+  <!-- Infinite Scroll Content -->
+  <!-- <ion-infinite-scroll (ionInfinite)="getVehiclesPaginated($event)" >
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading Vehicles...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll> -->
+
+  <!-- Add Vehicle Button -->
+  <!-- <ion-fab bottom right (click)="addVehicle()">
+    <button color="primary" ion-fab>
+        <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab> -->
+
+
+</ion-content>

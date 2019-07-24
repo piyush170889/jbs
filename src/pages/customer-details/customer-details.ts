@@ -156,20 +156,22 @@ export class CustomerDetailsPage {
           let invoiceTotalSgstTax: number = 0;
           let invoiceTotalRoundOff: number = 0;
 
-          invoiceItemListToIterate.forEach(
-            (invoiceItem: any) => {
-              invoiceTotalCgstTax = invoiceTotalCgstTax + Number.parseFloat(Number.parseFloat(invoiceItem.cgstTax).toFixed(2));
-              invoiceTotalSgstTax = invoiceTotalSgstTax + Number.parseFloat(Number.parseFloat(invoiceItem.sgstTax).toFixed(2));
-              invoiceTotalRoundOff = invoiceTotalRoundOff + Number.parseFloat(Number.parseFloat(invoiceItem.roundDif).toFixed(2));
-              invoiceActualTotal = invoiceActualTotal + Number.parseFloat(Number.parseFloat(invoiceItem.total + invoiceItem.cgstTax
-                + invoiceItem.sgstTax + invoiceItem.roundDif).toFixed(2));
-            }
-          );
+          if (null != invoiceItemListToIterate && undefined != invoiceItemListToIterate && invoiceItemListToIterate.length > 0) {
+            invoiceItemListToIterate.forEach(
+              (invoiceItem: any) => {
+                invoiceTotalCgstTax = invoiceTotalCgstTax + Number.parseFloat(Number.parseFloat(invoiceItem.cgstTax).toFixed(2));
+                invoiceTotalSgstTax = invoiceTotalSgstTax + Number.parseFloat(Number.parseFloat(invoiceItem.sgstTax).toFixed(2));
+                invoiceTotalRoundOff = invoiceTotalRoundOff + Number.parseFloat(Number.parseFloat(invoiceItem.roundDif).toFixed(2));
+                invoiceActualTotal = invoiceActualTotal + Number.parseFloat(Number.parseFloat(invoiceItem.total + invoiceItem.cgstTax
+                  + invoiceItem.sgstTax + invoiceItem.roundDif).toFixed(2));
+              }
+            );
 
-          invoice.actualTotal = invoiceActualTotal;
-          invoice.invoiceTotalCgstTax = invoiceTotalCgstTax;
-          invoice.invoiceTotalSgstTax = invoiceTotalSgstTax;
-          invoice.invoiceTotalRoundOff = invoiceTotalRoundOff;
+            invoice.actualTotal = invoiceActualTotal;
+            invoice.invoiceTotalCgstTax = invoiceTotalCgstTax;
+            invoice.invoiceTotalSgstTax = invoiceTotalSgstTax;
+            invoice.invoiceTotalRoundOff = invoiceTotalRoundOff;
+          }
         } else {
           invoice.actualTotal = invoice.grossTotal;
           invoice.invoiceTotalCgstTax = invoice.cgstTax;
