@@ -542,6 +542,8 @@ export class CommonUtilityProvider {
 
     resetSummaryReportDisplayData(summaryReportList: any[]) {
 
+        let finalSummaryReportList: any[] = [];
+
         summaryReportList.forEach(
             summaryRecord => {
                 summaryRecord.displayBrand = summaryRecord.brand;
@@ -557,8 +559,10 @@ export class CommonUtilityProvider {
                 summaryRecord.displayJan = summaryRecord.jan;
                 summaryRecord.displayFeb = summaryRecord.feb;
                 summaryRecord.displayMar = summaryRecord.mar;
+
+                finalSummaryReportList.push(summaryRecord);
             });
 
-        return summaryReportList;
+        return finalSummaryReportList;
     }
 }

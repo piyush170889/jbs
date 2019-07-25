@@ -315,6 +315,7 @@ export class SummaryReportPage {
     console.log('clearFilters CustFilterModalPage');
 
     this.summaryReportList = this.originalSummaryReportList;
+    this.summaryReportList = this.commonUtility.resetSummaryReportDisplayData(this.summaryReportList);
   }
 
 }

@@ -51,11 +51,11 @@ export class VehicleListPage {
 
       this.vehiclesList.push({
         vehicleDtlsId: 1,
-        vin: '9607123456',
-        vehicleNo: 'MH 13 Z 0774',
+        vin: '9607113848',
+        vehicleNo: 'MH 12 QG 4452',
         assignedDrvFNm: '',
         assignedDrvSNm: '',
-        firebaseId: '-LT1WJCwgLaPy_ppqe6j'
+        firebaseId: '-LO25MVjiRanSk4RtZDM'
       });
 
       // this.loader = this.commonUtility.createLoader();
