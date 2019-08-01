@@ -50,7 +50,7 @@ export class VehicleListPage {
     if (this.commonUtility.isNetworkAvailable()) {
 
       this.vehiclesList.push({
-        vehicleDtlsId: 1,
+        vehicleDtlsId: 21,
         vin: '9607113848',
         vehicleNo: 'MH 12 QG 4452',
         assignedDrvFNm: '',

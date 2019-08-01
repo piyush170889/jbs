@@ -10,6 +10,7 @@ import { CustFilterModalPage } from '../cust-filter-modal/cust-filter-modal';
 import { SaleempFilterModalPage } from '../saleemp-filter-modal/saleemp-filter-modal';
 import { BrandFilterModalPage } from '../brand-filter-modal/brand-filter-modal';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
+import { MonthFilterModalPage } from '../month-filter-modal/month-filter-modal';
 
 
 /**
@@ -31,6 +32,19 @@ export class SummaryReportPage {
   originalSummaryReportList: any[] = [];
   summaryReportList: any[] = [];
   orginalListDuplicate: any[] = [];
+  dispJan: boolean = false;
+  dispFeb: boolean = true;
+  dispMar: boolean = true;
+  dispApr: boolean = true;
+  dispMay: boolean = true;
+  dispJun: boolean = true;
+  dispJul: boolean = true;
+  dispAug: boolean = true;
+  dispSep: boolean = true;
+  dispOct: boolean = true;
+  dispNov: boolean = true;
+  dispDec: boolean = true;
+
 
 
   constructor(
@@ -310,12 +324,54 @@ export class SummaryReportPage {
       });
   }
 
-
   clearFilters() {
     console.log('clearFilters CustFilterModalPage');
 
     this.summaryReportList = this.originalSummaryReportList;
     this.summaryReportList = this.commonUtility.resetSummaryReportDisplayData(this.summaryReportList);
+
+    this.dispJan = true;
+    this.dispFeb = true;
+    this.dispMar = true;
+    this.dispApr = true;
+    this.dispMay = true;
+    this.dispJun = true;
+    this.dispJul = true;
+    this.dispAug = true;
+    this.dispSep = true;
+    this.dispOct = true;
+    this.dispNov = true;
+    this.dispDec = true;
   }
 
+  applyMonthFilters() {
+
+    console.log('applyMonthFilters CustFilterModalPage');
+
+
+    let monthFilterModal: Modal = this.modal.create(MonthFilterModalPage);
+
+    monthFilterModal.present();
+
+    monthFilterModal.onDidDismiss(
+      (monthFilterModalData) => {
+        console.log('monthFilterModalData = ' + JSON.stringify(monthFilterModalData));
+
+        if (monthFilterModalData.isAdded) {
+          console.log('monthFilterModalData = ' + JSON.stringify(monthFilterModalData));
+          this.dispJan = monthFilterModalData.dispJan;
+          this.dispFeb = monthFilterModalData.dispFeb;
+          this.dispMar = monthFilterModalData.dispMar;
+          this.dispApr = monthFilterModalData.dispApr;
+          this.dispMay = monthFilterModalData.dispMay;
+          this.dispJun = monthFilterModalData.dispJun;
+          this.dispJul = monthFilterModalData.dispJul;
+          this.dispAug = monthFilterModalData.dispAug;
+          this.dispSep = monthFilterModalData.dispSep;
+          this.dispOct = monthFilterModalData.dispOct;
+          this.dispNov = monthFilterModalData.dispNov;
+          this.dispDec = monthFilterModalData.dispDec;
+        }
+      });
+  }
 }

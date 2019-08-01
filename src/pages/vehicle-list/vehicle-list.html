@@ -8,15 +8,16 @@
 </ion-header>
 
 <ion-content padding>
-  
+
   <!-- Vehicles List -->
   <ion-list>
-      <button ion-item *ngFor="let vehicle of vehiclesList" (click)="vehicleSelected(vehicle)">
-        <h2 class="fm-title">VIN - {{ vehicle.vin }}</h2>
-        <h3 class="fm-sub-title">Vehicle No. - {{ vehicle.vehicleNo }}</h3>
-        <!-- <h3 class="fm-sub-title">Assigned Driver - {{ vehicle.assignedDrvFNm }} {{ vehicle.assignedDrvSNm }}</h3> -->
-        <ion-icon name="ios-arrow-forward" style="color:#ee7e2d" item-end></ion-icon>
-      </button>  
+    <button ion-item *ngFor="let vehicle of vehiclesList" style="font-weight:bold;color:#FFCB08 !important;background-color:#1c2431;"
+      (click)="vehicleSelected(vehicle)">
+      <h2>VIN - {{ vehicle.vin }}</h2>
+      <h3>Vehicle No. - {{ vehicle.vehicleNo }}</h3>
+      <!-- <h3 class="fm-sub-title">Assigned Driver - {{ vehicle.assignedDrvFNm }} {{ vehicle.assignedDrvSNm }}</h3> -->
+      <ion-icon name="ios-arrow-forward" style="color:#FFCB08" item-end></ion-icon>
+    </button>
   </ion-list>
 
   <!-- Infinite Scroll Content -->

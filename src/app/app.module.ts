@@ -76,6 +76,7 @@ import { BrandFilterModalPage } from '../pages/brand-filter-modal/brand-filter-m
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { VehicleListPage } from '../pages/vehicle-list/vehicle-list';
 import { VehicleTrackingPage } from '../pages/vehicle-tracking/vehicle-tracking';
+import { MonthFilterModalPage } from '../pages/month-filter-modal/month-filter-modal';
 
 
 @NgModule({
@@ -130,7 +131,8 @@ import { VehicleTrackingPage } from '../pages/vehicle-tracking/vehicle-tracking'
     SaleempFilterModalPage,
     BrandFilterModalPage,
     VehicleListPage,
-    VehicleTrackingPage
+    VehicleTrackingPage,
+    MonthFilterModalPage
   ],
   imports: [
     BrowserModule,
@@ -190,7 +192,8 @@ import { VehicleTrackingPage } from '../pages/vehicle-tracking/vehicle-tracking'
     SaleempFilterModalPage,
     BrandFilterModalPage,
     VehicleListPage,
-    VehicleTrackingPage
+    VehicleTrackingPage,
+    MonthFilterModalPage
   ],
   providers: [
     StatusBar,
