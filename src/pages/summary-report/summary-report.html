@@ -11,6 +11,15 @@
       <ion-icon name="menu"></ion-icon>
     </button>
   </ion-navbar>
+  <ion-row style="background-color: #2F3C51 !important; color: #FFCB08 !important">
+    <ion-col col-10 text-center>
+      Last Synced: {{tillDate == null || tillDate == '' ? 'Not Synced' : tillDate | date : 'dd MMM yy hh:mm a'}}
+    </ion-col>
+    <ion-col col-2 text-center>
+      <ion-icon ios="ios-refresh" (click)="syncSummaryReportsData()" md="md-refresh" *ngIf="!isDataSynching"></ion-icon>
+      <ion-spinner name="crescent" *ngIf="isDataSynching" color="plain"></ion-spinner>
+    </ion-col>
+  </ion-row>
 </ion-header>
 
 <ion-content padding>

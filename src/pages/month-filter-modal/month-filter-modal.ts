@@ -132,34 +132,35 @@ export class MonthFilterModalPage {
   applyFilters() {
 
     console.log('applyFilters CustFilterModalPage');
+    console.log('this.selectedMonthsList = ' + JSON.stringify(this.selectedMonthsList));
 
     if (this.selectedMonthsList.length > 0) {
 
       this.selectedMonthsList.forEach(
         (selectedMonth: any) => {
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_JAN)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_JAN)
             this.dispJan = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_FEB)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_FEB)
             this.dispFeb = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_MAR)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_MAR)
             this.dispMar = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_APR)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_APR)
             this.dispApr = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_MAY)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_MAY)
             this.dispMay = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_JUN)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_JUN)
             this.dispJun = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_JUL)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_JUL)
             this.dispJul = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_AUG)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_AUG)
             this.dispAug = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_SEP)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_SEP)
             this.dispSep = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_OCT)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_OCT)
             this.dispOct = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_NOV)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_NOV)
             this.dispNov = selectedMonth.value;
-          if (selectedMonth.month == MonthFilterModalPage.MONTH_DEC)
+          if (selectedMonth.monthName == MonthFilterModalPage.MONTH_DEC)
             this.dispDec = selectedMonth.value;
         }
       );
@@ -180,6 +181,7 @@ export class MonthFilterModalPage {
         dispDec: this.dispDec
       };
 
+      console.log('monthFilterModalData = ' + JSON.stringify(monthFilterModalData));
       this.view.dismiss(monthFilterModalData);
     } else {
       this.commonUtility.presentErrorToast('Please select valid values');

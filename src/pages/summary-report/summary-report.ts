@@ -28,11 +28,11 @@ import { MonthFilterModalPage } from '../month-filter-modal/month-filter-modal';
 export class SummaryReportPage {
 
   isDataSynching = false;
-  tillDate: string = 'Not Synced';
+  tillDate: string = '';
   originalSummaryReportList: any[] = [];
   summaryReportList: any[] = [];
   orginalListDuplicate: any[] = [];
-  dispJan: boolean = false;
+  dispJan: boolean = true;
   dispFeb: boolean = true;
   dispMar: boolean = true;
   dispApr: boolean = true;
@@ -152,6 +152,41 @@ export class SummaryReportPage {
 
             console.log('Summary Report Data = ' + JSON.stringify(response.response));
             let summaryReportDetailsList: any[] = response.response;
+            let sortedSummaryReportDetailsList: any[] = [];
+
+            summaryReportDetailsList.forEach(
+              (summaryReportDetails: any) => {
+                summaryReportDetails.apr = null == summaryReportDetails.apr
+                  || summaryReportDetails.apr == '' ? 0 : Number.parseFloat(summaryReportDetails.apr).toFixed(2);
+                summaryReportDetails.may = null == summaryReportDetails.may
+                  || summaryReportDetails.may == '' ? 0 : Number.parseFloat(summaryReportDetails.may).toFixed(2);
+                summaryReportDetails.jun = null == summaryReportDetails.jun
+                  || summaryReportDetails.jun == '' ? 0 : Number.parseFloat(summaryReportDetails.jun).toFixed(2);
+                summaryReportDetails.jul = null == summaryReportDetails.jul
+                  || summaryReportDetails.jul == '' ? 0 : Number.parseFloat(summaryReportDetails.jul).toFixed(2);
+                summaryReportDetails.aug = null == summaryReportDetails.aug
+                  || summaryReportDetails.aug == '' ? 0 : Number.parseFloat(summaryReportDetails.aug).toFixed(2);
+                summaryReportDetails.sep = null == summaryReportDetails.sep
+                  || summaryReportDetails.sep == '' ? 0 : Number.parseFloat(summaryReportDetails.sep).toFixed(2);
+                summaryReportDetails.oct = null == summaryReportDetails.oct
+                  || summaryReportDetails.oct == '' ? 0 : Number.parseFloat(summaryReportDetails.oct).toFixed(2);
+                summaryReportDetails.nov = null == summaryReportDetails.nov
+                  || summaryReportDetails.nov == '' ? 0 : Number.parseFloat(summaryReportDetails.nov).toFixed(2);
+                summaryReportDetails.dec = null == summaryReportDetails.dec
+                  || summaryReportDetails.dec == '' ? 0 : Number.parseFloat(summaryReportDetails.dec).toFixed(2);
+                summaryReportDetails.jan = null == summaryReportDetails.jan
+                  || summaryReportDetails.jan == '' ? 0 : Number.parseFloat(summaryReportDetails.jan).toFixed(2);
+                summaryReportDetails.feb = null == summaryReportDetails.feb
+                  || summaryReportDetails.feb == '' ? 0 : Number.parseFloat(summaryReportDetails.feb).toFixed(2);
+                summaryReportDetails.mar = null == summaryReportDetails.mar
+                  || summaryReportDetails.mar == '' ? 0 : Number.parseFloat(summaryReportDetails.mar).toFixed(2);
+
+                sortedSummaryReportDetailsList.push(summaryReportDetails);
+              }
+            );
+
+            console.log('Sorted Summary Report = ' + JSON.stringify(sortedSummaryReportDetailsList));
+            summaryReportDetailsList = sortedSummaryReportDetailsList;
 
             this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
 
