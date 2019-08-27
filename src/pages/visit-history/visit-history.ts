@@ -111,6 +111,8 @@ export class VisitHistoryPage {
 
     console.log('syncVisitData VisitHistoryPage');
 
+    this.syncLocationData();
+
     let adminUsersLocationDetailsApiEndpoint = ConstantsProvider.API_BASE_URL
       + ConstantsProvider.API_ENDPOINT_USERS + ConstantsProvider.URL_SEPARATOR
       + ConstantsProvider.API_ENDPOINT_ADMIN_USERS + ConstantsProvider.URL_SEPARATOR
@@ -169,6 +171,101 @@ export class VisitHistoryPage {
       this.commonUtility.presentErrorToast('No Internet Connection');
       this.isDataSynching = false;
     }
+  }
+
+  syncLocationData() {
+
+    console.log('Synching Location Data');
+    this.isDataSynching = true;
+
+    if (this.network.type != "unknown" && this.network.type != "none" && this.network.type != undefined) {
+
+      let locationDataApiEndpoint: string = ConstantsProvider.API_BASE_URL + ConstantsProvider.LOCATION_URL;
+
+      this.restService.getDetailsWithoutLoader(locationDataApiEndpoint)
+        .subscribe(
+          (response) => {
+            this.isDataSynching = false;
+
+            console.log('Location Data = ' + JSON.stringify(response.response));
+            let locationDetailsList: any[] = response.response;
+
+            this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
+
+              db.executeSql('SELECT data from metadata where configname=?',
+                [ConstantsProvider.CONFIG_NM_LOCATIONS_DATA])
+                .then(
+                  res => {
+                    if (res.rows.length > 0) {
+                      this.updateLocationsDetailsFromApi(locationDetailsList);
+                    } else {
+                      db.executeSql('INSERT INTO metadata(configname, data) VALUES(?,?)',
+                        [ConstantsProvider.CONFIG_NM_LOCATIONS_DATA, JSON.stringify(locationDetailsList)])
+                        .then(res => {
+
+                          console.log('Inserted Location Record');
+
+                          this.locationsList = locationDetailsList;
+
+                          this.updateLocationLastUpdatedTs();
+
+                          this.isDataSynching = false;
+                        })
+                        .catch(e => {
+                          console.log(JSON.stringify(e))
+                          this.isDataSynching = false;
+                        })
+                    }
+                  }
+                )
+                .catch(e => {
+                  console.log(JSON.stringify(e))
+                  this.isDataSynching = false;
+                })
+            })
+              .catch(e => {
+                console.log(JSON.stringify(e))
+                this.isDataSynching = false;
+              })
+          },
+          (err) => {
+            this.isDataSynching = false;
+          }
+        );
+    } else {
+      this.commonUtility.presentErrorToast('No Internet Connection');
+      this.isDataSynching = false;
+    }
+  }
+
+  updateLocationsDetailsFromApi(locationDetailsList: any[]) {
+
+    this.databaseProvider.initializeSqlLiteDb().then((db: SQLiteObject) => {
+      db.executeSql('UPDATE metadata set data=? WHERE configname=?', [JSON.stringify(locationDetailsList),
+      ConstantsProvider.CONFIG_NM_LOCATIONS_DATA])
+        .then(
+          res => {
+            console.log('Updated Location Record');
+
+            this.locationsList = locationDetailsList;
+            this.updateLocationLastUpdatedTs();
+          }
+        )
+        .catch(e => {
+          console.log(JSON.stringify(e))
+        });
+    })
+      .catch(e => {
+        console.log(JSON.stringify(e))
+      })
+  }
+
+  updateLocationLastUpdatedTs() {
+
+    let tillDateUpdated = new Date().toISOString();
+    this.databaseProvider.setItem(ConstantsProvider.CONFIG_NM_LOCATION_UPDATE_TS, tillDateUpdated);
+
+    this.tillDate = tillDateUpdated;
   }
 
   onInput() {

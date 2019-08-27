@@ -10,7 +10,6 @@ and Angular DI.
 @Injectable()
 export class ConstantsProvider {
 
-
   constructor(public http: HttpClient) {
     console.log('Hello ConstantsProvider Provider');
   }
@@ -22,7 +21,6 @@ export class ConstantsProvider {
 
   //DEV
   // public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapitest/v1/";
-  // public static API_BASE_URL: string = "http://67.211.220.180:8080/sapbaseapi/v1/";
 
   // STAGING
   // public static API_BASE_URL: string = "http://116.75.129.27:8089/sapbaseapitest/v1/";
@@ -72,6 +70,8 @@ export class ConstantsProvider {
   public static API_ENDPOINT_VERIFY_PIN = "verify-pin";
   public static API_ENDPOINT_GENERATE_PIN = "generate-pin";
   public static API_ENDPOINT_SUMM_RPT = "summary-report";
+  public static API_ENDPOINT_ORDER_DLVRY = "delivery-details";
+
 
   //Master Data JSON key names
   public static MD_UOM = "uom";
@@ -90,7 +90,7 @@ export class ConstantsProvider {
   public static ROLE_SALES = 'ROLE_SALES';
 
   //CONFIG Constants
-  public static SW_VER = '2.9.8';
+  public static SW_VER = '2.11.10';
   public static BASIC_AUTH_TOKEN = 'c2FwYmFzZW1vZHVsZTpzYXBiYXNlbW9kdWxlLXNlY3JldA==';
   public static CONFIG_NM_CUST_DATA = 'customer_data';
   public static CONFIG_NM_LAST_UPDATED_TS = "last_updated_ts";
