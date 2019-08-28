@@ -115,5 +115,7 @@
     <plugin name="cordova-sqlite-storage" spec="^3.2.0" />
     <plugin name="call-number" spec="^1.0.1" />
     <plugin name="com.outsystems.mobile.stetho" spec="~0.0.1" />
+    <plugin name="cordova-plugin-screen-orientation" spec="^3.0.2" />
+    <allow-navigation href="http://192.168.43.162:8100" />
     <engine name="android" spec="^7.0.0" />
 </widget>
