@@ -1,0 +1,54 @@
+INSERT INTO [dbo].[role_master_dtls]
+           ([ROLES_MASTER_DTLS_ID]
+           ,[ROLE_DESCRIPTION]
+           ,[IS_ACTIVE])
+     VALUES
+           ('ROLE_ADMIN', 'Admin' ,1),
+		   ('ROLE_CUSTOMER', 'Customer' ,1),
+		   ('ROLE_SALES', 'Sales' ,1),
+		   ('ROLE_USER', 'User' ,1);
+
+
+GO
+
+INSERT INTO [dbo].[user_login_dtls]
+           ([USER_LOGIN_DTLS_ID]
+           ,[USER_DTLS_ID]
+           ,[USERNAME]
+           ,[PASSWORD]
+           ,[CONTACT_NUM]
+           ,[IS_PASSWORD_CHANGED]
+           ,[IS_ACTIVE]
+           ,[IS_EMAIL_VERIFIED]
+           ,[TERMS_AND_CONDITION])
+     VALUES
+           ('a2b20ebf-7b9e-4e93-a12c-fdf86dff1a96'
+           ,'00e048e2-d099-43de-b1d2-ec5845e275c1'
+           ,'Admin'
+           ,'f38553100b8cd0e535ad7b8a3a27b8093e685e359853aad326bbe1bc5c964ba3782fd499aa88142c'
+           ,'Admin'
+           ,0
+           ,1
+           ,1
+           ,1)
+GO
+
+
+GO
+
+INSERT INTO [dbo].[user_role_dtls]
+           ([USER_ROLE_DTLS_ID]
+		   ,[ROLES_MASTER_DTLS_ID]
+           ,[USER_LOGIN_DTLS_ID]
+           ,[IS_ACTIVE]
+		   )
+     VALUES
+           (1
+		   ,'ROLE_USER'
+           ,'a2b20ebf-7b9e-4e93-a12c-fdf86dff1a96'
+           ,1), 
+		   (2,
+		   'ROLE_ADMIN'
+           ,'a2b20ebf-7b9e-4e93-a12c-fdf86dff1a96'
+           ,1)
+GO
