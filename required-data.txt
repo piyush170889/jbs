@@ -1,0 +1,8 @@
+#Tomcat Details:
+Url: http://116.74.206.28:8089/
+Username: tomcat
+Password: Piyush@123
+
+#Login Details:
+Admin username: Admin
+Admin password: admin
